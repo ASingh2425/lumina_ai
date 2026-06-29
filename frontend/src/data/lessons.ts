@@ -161,6 +161,20 @@ for step in range(5):
           'You unlocked the Gradient Descent sandbox. Experiment freely — change learning rate, starting position, and number of steps. Try to find settings that converge in under 10 steps.',
         widget: 'gradient-descent',
       },
+      {
+        id: 'gd-interview',
+        type: 'visual',
+        title: 'Recruiter Chat: Regularization',
+        content: 'Your FAANG interviewer wants to know how you prevent overfitting in gradient descent loops. Answer correctly to pass this interview stage.',
+        widget: 'interview-recruiter',
+      },
+      {
+        id: 'gd-project',
+        type: 'visual',
+        title: 'Portfolio Project: Marie Kondo GD',
+        content: 'Package your custom Lasso/Ridge Gradient Descent solver into a file and push it directly to your portfolio repository.',
+        widget: 'project-push',
+      },
     ],
   },
   {
@@ -826,6 +840,20 @@ def self_attention(Q, K, V):
     
     return system_context, user_prompt`,
       },
+      {
+        id: 'rag-interview',
+        type: 'visual',
+        title: 'Recruiter Chat: Context Pollution',
+        content: 'Your recruiter wants to know how you prevent prompt context pollution in vector databases. Choose the correct answers to move forward.',
+        widget: 'interview-recruiter',
+      },
+      {
+        id: 'rag-project',
+        type: 'visual',
+        title: 'Portfolio Project: Vector Search Engine',
+        content: 'Package your custom Cosine Similarity Search Engine into a file and push it to your portfolio.',
+        widget: 'project-push',
+      },
     ],
   },
   {
@@ -897,6 +925,20 @@ pairs = get_stats(vocab)
 best_pair = max(pairs, key=pairs.get) # e.g. ('e', 'a')
 vocab = merge_vocab(best_pair, vocab)
 print(vocab) # {'l ea r n i n g': 5, 'n e u r a l': 3}`,
+      },
+      {
+        id: 'tok-interview',
+        type: 'visual',
+        title: 'Recruiter Chat: OOV Handling',
+        content: 'Your recruiter wants to know how subword tokenization prevents out-of-vocabulary crash states. Answer correctly to pass the session.',
+        widget: 'interview-recruiter',
+      },
+      {
+        id: 'tok-project',
+        type: 'visual',
+        title: 'Portfolio Project: BPE Tokenizer',
+        content: 'Package your custom BPE subword tokenizer script and push it directly to your portfolio repository.',
+        widget: 'project-push',
       },
     ],
   },

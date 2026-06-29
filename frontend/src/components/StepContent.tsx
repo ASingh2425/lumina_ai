@@ -16,8 +16,16 @@ import { MathStepContent, MarkdownContent } from './stepHelpers'
 import { CnnPlayground } from './playgrounds/CnnPlayground'
 import { PcaPlayground } from './playgrounds/PcaPlayground'
 import { RandomForestPlayground } from './playgrounds/RandomForestPlayground'
+import { InterviewPlayground } from './playgrounds/InterviewPlayground'
+import { ProjectPushPlayground } from './playgrounds/ProjectPushPlayground'
 
-function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
+function Widget({ type, step, sandbox }: { type: WidgetType; step: LessonStep; sandbox?: boolean }) {
+  const topic = step.id.startsWith('gd-')
+    ? 'gradient-descent'
+    : step.id.startsWith('rag-')
+    ? 'rag-pipeline'
+    : 'tokenizer'
+
   if (type === 'gradient-descent') return <GradientDescentPlayground sandbox={sandbox} />
   if (type === 'linear-regression') return <LinearRegressionDraw />
   if (type === 'k-means') return <KMeansPlayground sandbox={sandbox} />
@@ -32,6 +40,8 @@ function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
   if (type === 'cnn') return <CnnPlayground />
   if (type === 'pca') return <PcaPlayground />
   if (type === 'random-forest') return <RandomForestPlayground />
+  if (type === 'interview-recruiter') return <InterviewPlayground topic={topic} />
+  if (type === 'project-push') return <ProjectPushPlayground topic={topic} />
   return null
 }
 
@@ -114,7 +124,7 @@ export function StepContent({ step, onQuizCorrect }: StepContentProps) {
       {step.content && <MarkdownContent text={step.content} />}
       {step.widget && step.widget !== 'none' && (
         <div className="mt-6">
-          <Widget type={step.widget} sandbox={step.type === 'sandbox'} />
+          <Widget type={step.widget} step={step} sandbox={step.type === 'sandbox'} />
         </div>
       )}
     </div>

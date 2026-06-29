@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from routers.progress import router as progress_router
 from routers.tutor import router as tutor_router
+from routers.github import router as github_router
 
 load_dotenv()
 
@@ -19,6 +20,7 @@ app.add_middleware(
 
 app.include_router(tutor_router)
 app.include_router(progress_router)
+app.include_router(github_router)
 
 
 @app.get("/health")
