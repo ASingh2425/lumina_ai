@@ -5,6 +5,8 @@ import { LinearRegressionDraw } from './playgrounds/LinearRegressionDraw'
 import { KMeansPlayground } from './playgrounds/KMeansPlayground'
 import { KnnPlayground } from './playgrounds/KnnPlayground'
 import { NumPySlicePlayground } from './playgrounds/NumPySlicePlayground'
+import { DecisionTreePlayground } from './playgrounds/DecisionTreePlayground'
+import { DbscanPlayground } from './playgrounds/DbscanPlayground'
 import { MathStepContent, MarkdownContent } from './stepHelpers'
 
 function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
@@ -13,6 +15,8 @@ function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
   if (type === 'k-means') return <KMeansPlayground sandbox={sandbox} />
   if (type === 'knn') return <KnnPlayground sandbox={sandbox} />
   if (type === 'numpy-slice') return <NumPySlicePlayground />
+  if (type === 'decision-tree') return <DecisionTreePlayground />
+  if (type === 'dbscan') return <DbscanPlayground />
   return null
 }
 

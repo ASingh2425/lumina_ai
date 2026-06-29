@@ -418,6 +418,163 @@ def predict_knn(X_train, y_train, x_query, k=3):
       },
     ],
   },
+  {
+    id: 'decision-tree',
+    title: 'Decision Trees',
+    description: 'Grow a tree of decisions by splitting data along feature thresholds and watch overfitting happen.',
+    module: 'Classification',
+    xpReward: 160,
+    steps: [
+      {
+        id: 'dt-story',
+        type: 'story',
+        title: 'Choosing a Restaurant',
+        content:
+          'How do you decide if you want to wait for a table at a restaurant? You check key factors:\n\nIs there a reservation? No → Is it raining? Yes → Are you hungry? Yes → Wait.\n\nYou are following a sequence of yes/no conditions. This is a **Decision Tree**! It splits your dataset step-by-step to reach a clear classification.',
+      },
+      {
+        id: 'dt-visual',
+        type: 'visual',
+        title: 'How Space Splits',
+        content:
+          'Look at the grid. The algorithm selects threshold boundaries (like "Is Humidity > 3.2?") to group Red and Blue points. Change the **max_depth** slider to see splits partition further.',
+        widget: 'decision-tree',
+      },
+      {
+        id: 'dt-quiz',
+        type: 'quiz',
+        title: 'Max Depth Tradeoff',
+        quiz: {
+          prompt: 'What is a drawback of setting a high max_depth value in a Decision Tree?',
+          options: [
+            { id: 'a', label: 'The tree is too simple and underfits the data' },
+            { id: 'b', label: 'The tree memorizes noise points and overfits' },
+            { id: 'c', label: 'The tree fails to make any predictions' },
+            { id: 'd', label: 'Training speed increases infinitely' },
+          ],
+          correctId: 'b',
+          explanation:
+            'A high max_depth allows the tree to split repeatedly until every single training point is perfectly isolated, including random noise. This is overfitting, causing poor performance on new data.',
+        },
+      },
+      {
+        id: 'dt-math',
+        type: 'math',
+        title: 'Measuring Purity (Entropy)',
+        formula: 'Entropy(S) = − Σ p_i log₂(p_i)',
+        content: 'To choose the best split, decision trees calculate **Entropy** (disorder). A split is chosen to maximize **Information Gain** (decrease in entropy).',
+        mathParts: [
+          { symbol: 'p_i', explanation: 'Probability/fraction of points in class i inside the subset.' },
+          { symbol: 'log₂', explanation: 'Logarithm base 2 — measures binary bits of information.' },
+          { symbol: 'Entropy(S)', explanation: 'Disorder score. Entropy = 0 means a perfectly pure cluster. Entropy = 1 means a 50/50 mix.' },
+        ],
+      },
+      {
+        id: 'dt-code',
+        type: 'code',
+        title: 'Building Splits',
+        code: `def calculate_entropy(labels):
+    counts = np.bincount(labels)
+    probabilities = counts / len(labels)
+    # Filter zeros to avoid log(0)
+    probabilities = probabilities[probabilities > 0]
+    return -np.sum(probabilities * np.log2(probabilities))
+
+def find_best_split(X, y):
+    best_gain = 0
+    best_split = None
+    parent_entropy = calculate_entropy(y)
+    
+    # Check all features and thresholds
+    for feature in range(X.shape[1]):
+        for val in np.unique(X[:, feature]):
+            left_mask = X[:, feature] <= val
+            right_mask = ~left_mask
+            
+            # Skip empty splits
+            if sum(left_mask) == 0 or sum(right_mask) == 0:
+                continue
+                
+            # Calculate Information Gain
+            n = len(y)
+            w_left = sum(left_mask) / n
+            w_right = sum(right_mask) / n
+            gain = parent_entropy - (w_left * calculate_entropy(y[left_mask]) + 
+                                     w_right * calculate_entropy(y[right_mask]))
+            if gain > best_gain:
+                best_gain, best_split = gain, (feature, val)
+    return best_split`,
+      },
+    ],
+  },
+  {
+    id: 'dbscan',
+    title: 'DBSCAN Clustering',
+    description: 'Discover density-based clusters and filter noise without needing to pre-specify K.',
+    module: 'Unsupervised Learning',
+    xpReward: 160,
+    steps: [
+      {
+        id: 'dbs-story',
+        type: 'story',
+        title: 'Hotspots & Noise',
+        content:
+          'K-Means works well for circular clusters, but fails on weirdly shaped groupings or when there is lots of background noise.\n\nImagine identifying restaurant hotspots in a city. You only want to group restaurants that are tightly packed, leaving isolated food trucks out as noise.\n\n**DBSCAN** does this by expanding clusters along dense paths of adjacent points, ignoring outliers.',
+      },
+      {
+        id: 'dbs-visual',
+        type: 'visual',
+        title: 'Density Neighborhoods',
+        content:
+          'Click on any data point. The dashed circle shows its radius (epsilon). Points with enough neighbors become Green **Core** points. Border points are Orange, and isolated points are Red **Noise**.',
+        widget: 'dbscan',
+      },
+      {
+        id: 'dbs-experiment',
+        type: 'experiment',
+        title: 'Tweak the Density',
+        content:
+          'Adjust **Epsilon (ε)** and **MinPts**. Watch how increasing Epsilon merges neighboring clusters and re-classifies Noise points into Border points.',
+        widget: 'dbscan',
+      },
+      {
+        id: 'dbs-math',
+        type: 'math',
+        title: 'Density Reachability',
+        formula: 'N_ε(p) = { q ∈ D | dist(p, q) ≤ ε }',
+        content: 'A point q is directly density-reachable from p if it is within distance epsilon, and p is a core point.',
+        mathParts: [
+          { symbol: 'N_ε(p)', explanation: 'Epsilon-neighborhood of point p (all points within distance ε).' },
+          { symbol: 'dist(p, q)', explanation: 'Euclidean distance calculation.' },
+          { symbol: '≤ ε', explanation: 'Must be within radius ε parameter.' },
+        ],
+      },
+      {
+        id: 'dbs-code',
+        type: 'code',
+        title: 'DBSCAN Search Loop',
+        code: `def get_neighbors(X, pt_idx, eps):
+    distances = np.linalg.norm(X - X[pt_idx], axis=1)
+    return np.where(distances <= eps)[0]
+
+def dbscan(X, eps, min_pts):
+    labels = np.zeros(len(X)) # 0 = unvisited, -1 = noise, 1+ = cluster_id
+    cluster_id = 0
+    
+    for i in range(len(X)):
+        if labels[i] != 0: continue
+        neighbors = get_neighbors(X, i, eps)
+        
+        if len(neighbors) < min_pts:
+            labels[i] = -1 # Noise
+        else:
+            cluster_id += 1
+            # Expand cluster recursively
+            expand_cluster(X, labels, i, neighbors, cluster_id, eps, min_pts)
+    return labels`,
+      },
+    ],
+  },
 ]
 
 export function getLesson(id: string): Lesson | undefined {
