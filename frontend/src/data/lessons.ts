@@ -575,6 +575,146 @@ def dbscan(X, eps, min_pts):
       },
     ],
   },
+  {
+    id: 'neural-network',
+    title: 'Neural Networks',
+    description: 'Adjust weights and biases to separate non-linear data and see what a single neuron can classify.',
+    module: 'Deep Learning',
+    xpReward: 180,
+    steps: [
+      {
+        id: 'nn-story',
+        type: 'story',
+        title: 'Recognizing Your Friend',
+        content:
+          'How do you identify a friend in a crowded room?\n\nYour brain doesn\'t run a single formula. It looks at visual indicators: hair length, height, eye color, clothing. Each indicator gets a weight. If the combined score exceeds a threshold, your brain fires: "Hey, that\'s Sarah!"\n\nThis is a **Neuron** — the basic building block of Deep Learning. It sums up weighted inputs, adds a bias, and passes it through an activation function.',
+      },
+      {
+        id: 'nn-visual',
+        type: 'visual',
+        title: 'The Separating Line',
+        content:
+          'Look at the grid. The yellow line is the perceptron\'s decision boundary: `w₁·X₁ + w₂·X₂ + b = 0`. Adjust the sliders to see how the weights rotate the boundary, and how the bias translates it. Try to separate the Red circles from the Blue squares!',
+        widget: 'neural-network',
+      },
+      {
+        id: 'nn-quiz',
+        type: 'quiz',
+        title: 'Role of Bias',
+        quiz: {
+          prompt: 'What does the bias parameter do in a neuron?',
+          options: [
+            { id: 'a', label: 'It scales the input values directly' },
+            { id: 'b', label: 'It shifts the decision boundary without changing its slope' },
+            { id: 'c', label: 'It disables the activation function completely' },
+            { id: 'd', label: 'It is a placeholder that has no mathematical effect' },
+          ],
+          correctId: 'b',
+          explanation:
+            'While weights control the rotation (slope) of the decision boundary, the bias shifts the line left/right/up/down. It represents the threshold required for the neuron to activate.',
+        },
+      },
+      {
+        id: 'nn-math',
+        type: 'math',
+        title: 'Neuron Activation',
+        formula: 'y = σ(wᵀx + b)',
+        content: 'Neurons compute a weighted sum of inputs and pass it through a non-linear activation function, like the Sigmoid function, which squashes outputs between 0 and 1.',
+        mathParts: [
+          { symbol: 'wᵀx', explanation: 'Dot product of weight vector and input feature vector (w₁x₁ + w₂x₂ + ...).' },
+          { symbol: 'b', explanation: 'Bias — shifts the activation threshold.' },
+          { symbol: 'σ', explanation: 'Sigmoid activation function: 1 / (1 + e^-z). Non-linearity is what lets networks learn complex patterns.' },
+        ],
+      },
+      {
+        id: 'nn-code',
+        type: 'code',
+        title: 'Perceptron Class',
+        code: `import numpy as np
+
+class Perceptron:
+    def __init__(self, input_dim, lr=0.1):
+        self.weights = np.zeros(input_dim)
+        self.bias = 0.0
+        self.lr = lr
+        
+    def predict(self, x):
+        # Activation threshold: w*x + b >= 0
+        z = np.dot(self.weights, x) + self.bias
+        return 1.0 if z >= 0 else 0.0
+        
+    def train(self, X, y, epochs=10):
+        for epoch in range(epochs):
+            for xi, target in zip(X, y):
+                prediction = self.predict(xi)
+                # Weight update proportional to error
+                error = target - prediction
+                self.weights += self.lr * error * xi
+                self.bias += self.lr * error`,
+      },
+    ],
+  },
+  {
+    id: 'self-attention',
+    title: 'Self-Attention',
+    description: 'Hover over tokens to watch Key-Query contextual weight vectors connect words and resolve sentence ambiguity.',
+    module: 'Generative AI',
+    xpReward: 200,
+    steps: [
+      {
+        id: 'sa-story',
+        type: 'story',
+        title: 'Context Shifts Meaning',
+        content:
+          'Consider these two sentences:\n\n1. *"The bank of the river was muddy."*\n2. *"The bank of the city was robbed."*\n\nHow do you know what the word "bank" means? You check the surrounding words: "river" and "muddy" vs. "city" and "robbed".\n\nTransformers use **Self-Attention** to link words together based on context. Every word queries every other word to find its semantic friends.',
+      },
+      {
+        id: 'sa-visual',
+        type: 'visual',
+        title: 'Context Resolution',
+        content:
+          'Hover over the word **"it"** in both sentences. Notice how in Sentence 1, it points strongly to "animal", while in Sentence 2, it points to "street". The connection lines show the self-attention weights.',
+        widget: 'self-attention',
+      },
+      {
+        id: 'sa-math',
+        type: 'math',
+        title: 'Scale Dot-Product Attention',
+        formula: 'Attention(Q, K, V) = softmax(QKᵀ / √d_k)V',
+        content: 'Self-attention uses Query (Q), Key (K), and Value (V) matrices. The dot product of Q and K determines which words focus on each other.',
+        mathParts: [
+          { symbol: 'QKᵀ', explanation: 'Dot product of Query and Key vectors — measures raw similarity between tokens.' },
+          { symbol: '/ √d_k', explanation: 'Scaling factor — prevents the dot products from growing too large in high dimensions.' },
+          { symbol: 'softmax', explanation: 'Exponentiates and normalizes scores so attention weights sum to 1.0.' },
+          { symbol: 'V', explanation: 'Value vector — represents the content/meaning that is routed to the output.' },
+        ],
+      },
+      {
+        id: 'sa-code',
+        type: 'code',
+        title: 'Dot Product Attention',
+        code: `import numpy as np
+
+def softmax(x):
+    exp_x = np.exp(x - np.max(x, axis=-1, keepdims=True))
+    return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
+
+def self_attention(Q, K, V):
+    # Q, K, V have shape (seq_len, d_k)
+    d_k = Q.shape[-1]
+    
+    # 1. Calculate similarity weights: QK^T / sqrt(d_k)
+    scores = np.dot(Q, K.T) / np.sqrt(d_k)
+    
+    # 2. Convert to probabilities
+    weights = softmax(scores)
+    
+    # 3. Route contextual values
+    output = np.dot(weights, V)
+    return output, weights`,
+      },
+    ],
+  },
 ]
 
 export function getLesson(id: string): Lesson | undefined {

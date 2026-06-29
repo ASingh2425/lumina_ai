@@ -7,6 +7,8 @@ import { KnnPlayground } from './playgrounds/KnnPlayground'
 import { NumPySlicePlayground } from './playgrounds/NumPySlicePlayground'
 import { DecisionTreePlayground } from './playgrounds/DecisionTreePlayground'
 import { DbscanPlayground } from './playgrounds/DbscanPlayground'
+import { NeuralNetworkPlayground } from './playgrounds/NeuralNetworkPlayground'
+import { SelfAttentionPlayground } from './playgrounds/SelfAttentionPlayground'
 import { MathStepContent, MarkdownContent } from './stepHelpers'
 
 function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
@@ -17,6 +19,8 @@ function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
   if (type === 'numpy-slice') return <NumPySlicePlayground />
   if (type === 'decision-tree') return <DecisionTreePlayground />
   if (type === 'dbscan') return <DbscanPlayground />
+  if (type === 'neural-network') return <NeuralNetworkPlayground />
+  if (type === 'self-attention') return <SelfAttentionPlayground />
   return null
 }
 

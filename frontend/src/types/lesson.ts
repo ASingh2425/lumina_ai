@@ -7,7 +7,7 @@ export type StepType =
   | 'quiz'
   | 'sandbox'
 
-export type WidgetType = 'gradient-descent' | 'linear-regression' | 'k-means' | 'knn' | 'numpy-slice' | 'decision-tree' | 'dbscan' | 'none'
+export type WidgetType = 'gradient-descent' | 'linear-regression' | 'k-means' | 'knn' | 'numpy-slice' | 'decision-tree' | 'dbscan' | 'neural-network' | 'self-attention' | 'none'
 
 export interface LessonStep {
   id: string
