@@ -9,6 +9,8 @@ import { DecisionTreePlayground } from './playgrounds/DecisionTreePlayground'
 import { DbscanPlayground } from './playgrounds/DbscanPlayground'
 import { NeuralNetworkPlayground } from './playgrounds/NeuralNetworkPlayground'
 import { SelfAttentionPlayground } from './playgrounds/SelfAttentionPlayground'
+import { RagPlayground } from './playgrounds/RagPlayground'
+import { TokenizerPlayground } from './playgrounds/TokenizerPlayground'
 import { MathStepContent, MarkdownContent } from './stepHelpers'
 
 function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
@@ -21,6 +23,8 @@ function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
   if (type === 'dbscan') return <DbscanPlayground />
   if (type === 'neural-network') return <NeuralNetworkPlayground />
   if (type === 'self-attention') return <SelfAttentionPlayground />
+  if (type === 'rag-pipeline') return <RagPlayground />
+  if (type === 'tokenizer') return <TokenizerPlayground />
   return null
 }
 

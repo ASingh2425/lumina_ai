@@ -715,6 +715,135 @@ def self_attention(Q, K, V):
       },
     ],
   },
+  {
+    id: 'rag-pipeline',
+    title: 'Retrieval-Augmented Gen (RAG)',
+    description: 'Give your LLM an open-book library. Control document retrieval scores and inspect prompt context builds.',
+    module: 'Generative AI',
+    xpReward: 180,
+    steps: [
+      {
+        id: 'rag-story',
+        type: 'story',
+        title: 'The Open Book Exam',
+        content:
+          'LLMs memorize training data, but they get outdated quickly or hallucinate when they don\'t know the answer.\n\nImagine taking an exam. A **closed-book exam** requires memorizing everything (like vanilla GPT). An **open-book exam** lets you browse a reference library to find the exact page you need before writing (RAG!).\n\nRetrieval-Augmented Generation searches external documents, finds matching facts, and feeds them directly into the LLM prompt context.',
+      },
+      {
+        id: 'rag-visual',
+        type: 'visual',
+        title: 'Pipeline Step-by-Step',
+        content:
+          'Click the steps (1 to 4) to follow a search query. Set the similarity threshold slider to filter documents. See how a low threshold retrieves irrelevant details (Mona Lisa facts when asking about dogs), polluting context.',
+        widget: 'rag-pipeline',
+      },
+      {
+        id: 'rag-math',
+        type: 'math',
+        title: 'Vector Similarity (Cosine)',
+        formula: 'Similarity = (A · B) / (||A|| ||B||)',
+        content: 'To find matching facts, RAG converts queries and documents into embedding vectors and computes their similarity score (usually Cosine Similarity).',
+        mathParts: [
+          { symbol: 'A · B', explanation: 'Dot product of document and query vector embeddings — sums up matching spatial directions.' },
+          { symbol: '||A|| ||B||', explanation: 'Product of vector lengths — normalizes the score so it falls strictly between -1 and 1.' },
+          { symbol: 'Similarity', explanation: 'Cosine similarity. Closer to 1.0 means vectors point in the same conceptual direction.' },
+        ],
+      },
+      {
+        id: 'rag-code',
+        type: 'code',
+        title: 'Building Context Prompts',
+        code: `def retrieve_and_format(query, document_db, threshold=0.7):
+    retrieved = []
+    query_vector = embed(query)
+    
+    for doc in document_db:
+        doc_vector = embed(doc['text'])
+        # Compute Cosine Similarity
+        sim = cosine_similarity(query_vector, doc_vector)
+        if sim >= threshold:
+            retrieved.append(doc['text'])
+            
+    # Combine into prompt instruction
+    system_context = "Reference documents:\\n" + "\\n".join(retrieved)
+    user_prompt = f"Using only the references, answer this: {query}"
+    
+    return system_context, user_prompt`,
+      },
+    ],
+  },
+  {
+    id: 'tokenizer',
+    title: 'Byte-Pair Tokenization',
+    description: 'See how LLMs split words into colored subword byte pieces, allowing them to read and process new vocabulary.',
+    module: 'Generative AI',
+    xpReward: 160,
+    steps: [
+      {
+        id: 'tok-story',
+        type: 'story',
+        title: 'Reading Syllables',
+        content:
+          'Computers don\'t understand letters or words. They need numbers.\n\nBut if we assign a number to every single word in existence, our vocabulary size explodes. If we assign a number to every letter, our sentences become way too long to process.\n\n**Byte-Pair Encoding (BPE)** tokenization finds the perfect middle ground: it splits words into common chunks (subwords like "learn" + "ing") so it can read anything.',
+      },
+      {
+        id: 'tok-visual',
+        type: 'visual',
+        title: 'Slicing Subwords',
+        content:
+          'Type a sentence in the input box. Slide the **Vocabulary Merge** slider. Watch how low merges split words into individual characters, and high merges group characters into subwords and whole tokens.',
+        widget: 'tokenizer',
+      },
+      {
+        id: 'tok-quiz',
+        type: 'quiz',
+        title: 'Out of Vocab Handling',
+        quiz: {
+          prompt: 'What is a primary benefit of using subword tokenization (like BPE) over word-level tokenization?',
+          options: [
+            { id: 'a', label: 'It compresses text size to zero' },
+            { id: 'b', label: 'It allows the model to handle unseen, out-of-vocabulary words by breaking them down' },
+            { id: 'c', label: 'It forces the model to ignore spelling mistakes' },
+            { id: 'd', label: 'It speeds up network training by a factor of a million' },
+          ],
+          correctId: 'b',
+          explanation:
+            'Word-level tokenizers cannot process words they haven\'t seen during training, throwing an error. BPE breaks unseen words down into constituent characters or subword blocks that exist in its vocabulary.',
+        },
+      },
+      {
+        id: 'tok-code',
+        type: 'code',
+        title: 'BPE Merge Step',
+        code: `import re, collections
+
+def get_stats(vocab):
+    pairs = collections.defaultdict(int)
+    for word, freq in vocab.items():
+        symbols = word.split()
+        for i in range(len(symbols)-1):
+            pairs[symbols[i],symbols[i+1]] += freq
+    return pairs
+
+def merge_vocab(pair, v_in):
+    v_out = {}
+    bigram = re.escape(' '.join(pair))
+    p = re.compile(r'(?<!\\S)' + bigram + r'(?!\\S)')
+    for word in v_in:
+        w_out = p.sub(''.join(pair), word)
+        v_out[w_out] = v_in[word]
+    return v_out
+
+# Example merge step:
+vocab = {'l e a r n i n g': 5, 'n e u r a l': 3}
+# Find most frequent pair and merge it:
+pairs = get_stats(vocab)
+best_pair = max(pairs, key=pairs.get) # e.g. ('e', 'a')
+vocab = merge_vocab(best_pair, vocab)
+print(vocab) # {'l ea r n i n g': 5, 'n e u r a l': 3}`,
+      },
+    ],
+  },
 ]
 
 export function getLesson(id: string): Lesson | undefined {
