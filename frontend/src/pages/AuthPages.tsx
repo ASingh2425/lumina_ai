@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { API_URL } from '../config'
 
 type Mode = 'login' | 'register' | 'verify' | 'forgot' | 'reset'
 
@@ -23,7 +24,7 @@ export function AuthPages() {
     setSuccess(null)
 
     try {
-      const res = await fetch('http://localhost:8000/api/auth/register', {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, username, email, password })
@@ -48,7 +49,7 @@ export function AuthPages() {
     setSuccess(null)
 
     try {
-      const res = await fetch('http://localhost:8000/api/auth/verify-email', {
+      const res = await fetch(`${API_URL}/api/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp })
@@ -72,7 +73,7 @@ export function AuthPages() {
     setError(null)
 
     try {
-      const res = await fetch('http://localhost:8000/api/auth/login', {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username_or_email: username, password })
@@ -109,7 +110,7 @@ export function AuthPages() {
     setSuccess(null)
 
     try {
-      const res = await fetch('http://localhost:8000/api/auth/forgot-password', {
+      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -134,7 +135,7 @@ export function AuthPages() {
     setSuccess(null)
 
     try {
-      const res = await fetch('http://localhost:8000/api/auth/reset-password', {
+      const res = await fetch(`${API_URL}/api/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, new_password: newPassword })

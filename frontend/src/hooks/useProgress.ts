@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { DEFAULT_PROGRESS, type UserProgress } from '../types/progress'
+import { API_URL } from '../config'
 
 const STORAGE_KEY = 'lumina-progress'
 
@@ -53,7 +54,7 @@ export function useProgress() {
   useEffect(() => {
     const userId = getUserId()
     if (userId !== "local") {
-      fetch(`http://localhost:8000/progress/${userId}`)
+      fetch(`${API_URL}/progress/${userId}`)
         .then((res) => res.json())
         .then((data) => {
           if (data && data.user_id) {
@@ -77,7 +78,7 @@ export function useProgress() {
     if (userId === "local") return
 
     try {
-      await fetch(`http://localhost:8000/progress/${userId}`, {
+      await fetch(`${API_URL}/progress/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

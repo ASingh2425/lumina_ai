@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { API_URL } from '../config'
 
 interface AdminUserRow {
   id: number
@@ -21,7 +22,7 @@ export function AdminPortal() {
     const token = localStorage.getItem('token')
 
     try {
-      const res = await fetch('http://localhost:8000/api/admin/users', {
+      const res = await fetch(`${API_URL}/api/admin/users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -44,7 +45,7 @@ export function AdminPortal() {
   const promoteUser = async (userId: number) => {
     const token = localStorage.getItem('token')
     try {
-      const res = await fetch(`http://localhost:8000/api/admin/promote/${userId}`, {
+      const res = await fetch(`${API_URL}/api/admin/promote/${userId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
