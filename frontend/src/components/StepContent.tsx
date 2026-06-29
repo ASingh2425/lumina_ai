@@ -13,6 +13,10 @@ import { RagPlayground } from './playgrounds/RagPlayground'
 import { TokenizerPlayground } from './playgrounds/TokenizerPlayground'
 import { MathStepContent, MarkdownContent } from './stepHelpers'
 
+import { CnnPlayground } from './playgrounds/CnnPlayground'
+import { PcaPlayground } from './playgrounds/PcaPlayground'
+import { RandomForestPlayground } from './playgrounds/RandomForestPlayground'
+
 function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
   if (type === 'gradient-descent') return <GradientDescentPlayground sandbox={sandbox} />
   if (type === 'linear-regression') return <LinearRegressionDraw />
@@ -25,6 +29,9 @@ function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
   if (type === 'self-attention') return <SelfAttentionPlayground />
   if (type === 'rag-pipeline') return <RagPlayground />
   if (type === 'tokenizer') return <TokenizerPlayground />
+  if (type === 'cnn') return <CnnPlayground />
+  if (type === 'pca') return <PcaPlayground />
+  if (type === 'random-forest') return <RandomForestPlayground />
   return null
 }
 

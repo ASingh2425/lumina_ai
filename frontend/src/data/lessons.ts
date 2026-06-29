@@ -900,6 +900,114 @@ print(vocab) # {'l ea r n i n g': 5, 'n e u r a l': 3}`,
       },
     ],
   },
+  {
+    id: 'cnn-conv',
+    title: 'Convolutional Networks (CNN)',
+    description: 'Slide visual kernel filters across pixels to detect edges and extract features from images.',
+    module: 'Deep Learning',
+    xpReward: 180,
+    steps: [
+      {
+        id: 'cnn-story',
+        type: 'story',
+        title: 'Scanning a Painting',
+        content:
+          'To recognize a face, you don\'t stare at the whole room at once. You focus on small details: the nose shape, the curvature of eyes, the chin line.\n\n**Convolutional Neural Networks (CNNs)** mimic this. Instead of feeding all pixels into one giant calculation, a small filter (called a kernel) slides across the image, highlighting specific patterns like edges or curves.',
+      },
+      {
+        id: 'cnn-visual',
+        type: 'visual',
+        title: 'Feature Extraction Scan',
+        content:
+          'Press "Run Auto Scan" to watch a $3 \times 3$ vertical edge detector scan the $6 \times 6$ grid. The kernel multiplies overlapping pixels, sums them up, and populates the Output Feature Map cell-by-cell.',
+        widget: 'cnn',
+      },
+      {
+        id: 'cnn-math',
+        type: 'math',
+        title: 'Convolution Math',
+        formula: 'S(i, j) = (I * K)(i, j) = Σ Σ I(i-m, j-n) K(m, n)',
+        content: 'The convolution operation multiplies values of the kernel filter against corresponding image pixels and sums them to produce a single value in the feature map.',
+        mathParts: [
+          { symbol: 'I * K', explanation: 'Convolution operation — sliding the filter kernel K across image matrix I.' },
+          { symbol: 'Σ Σ', explanation: 'Double summation — adding up pixel multiplications across the 2D filter dimensions.' },
+          { symbol: 'S(i, j)', explanation: 'Activation value — populated inside output cell coordinates [i, j].' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'pca-reduction',
+    title: 'PCA Dimension Reduction',
+    description: 'Compress high-dimensional datasets by rotating projection axes and maximizing preserved variance.',
+    module: 'Unsupervised Learning',
+    xpReward: 160,
+    steps: [
+      {
+        id: 'pca-story',
+        type: 'story',
+        title: 'Packing a Suitcase',
+        content:
+          'Imagine you have a beautiful 3D sculpture of a bicycle and want to draw it on a flat 2D sheet of paper. If you draw it from the top down, it just looks like a line (low variance). If you draw it from the side, you capture the wheels, handlebars, and frame (high variance!).\n\n**Principal Component Analysis (PCA)** rotates your dataset coordinate axes to project 3D details onto a 2D sheet, preserving as much spread (variance) as possible.',
+      },
+      {
+        id: 'pca-visual',
+        type: 'visual',
+        title: 'Rotate and Project',
+        content:
+          'Slide the angle bar to rotate the projection line. Observe how the projected yellow points spread out or cluster. Try to maximize the Preserved Variance score above 1.80!',
+        widget: 'pca',
+      },
+      {
+        id: 'pca-math',
+        type: 'math',
+        title: 'Covariance Projection',
+        formula: 'Σ x_i x_iᵀ v = λ v',
+        content: 'PCA finds the eigenvectors (principal components) of the covariance matrix. The eigenvector with the largest eigenvalue represents the axis of maximum variance.',
+        mathParts: [
+          { symbol: 'Σ x_i x_iᵀ', explanation: 'Covariance matrix — represents how features vary together.' },
+          { symbol: 'v', explanation: 'Eigenvector (Principal Component direction) — defines the projection line axis.' },
+          { symbol: 'λ', explanation: 'Eigenvalue — corresponds to the variance preserved along that component.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'random-forest',
+    title: 'Random Forests',
+    description: 'Ensemble multiple decision trees together. Witness how average voting smooths splits and prevents overfitting.',
+    module: 'Classification',
+    xpReward: 160,
+    steps: [
+      {
+        id: 'rf-story',
+        type: 'story',
+        title: 'Wisdom of the Crowd',
+        content:
+          'If you ask one doctor for a diagnosis, they might make a mistake due to a bias (overfitting). If you ask 100 doctors, and take the majority opinion, the diagnosis becomes highly accurate.\n\nThis is a **Random Forest**! It trains multiple decision trees on different random subsets of data and averages their votes to make a final prediction.',
+      },
+      {
+        id: 'rf-visual',
+        type: 'visual',
+        title: 'Smooth Voting Boundaries',
+        content:
+          'Select "Tree 1", "Tree 2", and "Tree 3" tabs. Notice how their individual cut boundaries are jagged. Now select "Ensemble Vote" to see how combining their predictions smooths out the boundary and ignores outliers.',
+        widget: 'random-forest',
+      },
+      {
+        id: 'rf-math',
+        type: 'math',
+        title: 'Ensemble Aggregation',
+        formula: 'ŷ = mode { T₁(x), T₂(x), ..., T_B(x) }',
+        content: 'A Random Forest classifies queries by feeding the input features into B independent decision trees and selecting the majority mode classification.',
+        mathParts: [
+          { symbol: 'T_i(x)', explanation: 'Individual Decision Tree prediction output.' },
+          { symbol: 'mode', explanation: 'Majority vote selector — returns the class selected by the highest count of trees.' },
+          { symbol: 'ŷ', explanation: 'Final Ensemble classification prediction.' },
+        ],
+      },
+    ],
+  },
 ]
 
 export function getLesson(id: string): Lesson | undefined {
