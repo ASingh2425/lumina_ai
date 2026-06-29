@@ -54,7 +54,7 @@ export function useProgress() {
   useEffect(() => {
     const userId = getUserId()
     if (userId !== "local") {
-      fetch(`${API_URL}/progress/${userId}`)
+      fetch(`${API_URL}/api/progress/${userId}`)
         .then((res) => res.json())
         .then((data) => {
           if (data && data.user_id) {
@@ -78,7 +78,7 @@ export function useProgress() {
     if (userId === "local") return
 
     try {
-      await fetch(`${API_URL}/progress/${userId}`, {
+      await fetch(`${API_URL}/api/progress/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
