@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 class AskWhyRequest(BaseModel):
     question: str = Field(..., min_length=1, max_length=500)
-    level: str = Field(default="beginner", pattern="^(beginner|college)$")
+    level: str = Field(default="beginner", pattern="^(age_10|beginner|college|interview|mathematical)$")
     context: str = Field(default="", max_length=200)
 
 

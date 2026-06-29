@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-type TutorLevel = 'beginner' | 'college'
+type TutorLevel = 'age_10' | 'beginner' | 'college' | 'interview' | 'mathematical'
 
 interface AskWhyResponse {
   answer: string
@@ -9,10 +9,16 @@ interface AskWhyResponse {
 
 const FALLBACK_ANSWERS: Record<string, Record<TutorLevel, string>> = {
   default: {
+    age_10:
+      'Imagine sorting your toys into boxes — some boxes are for cars, and some are for blocks. AI does this by grouping similar things together.',
     beginner:
       'Think of it like learning to ride a bike. You try, wobble, adjust, and slowly get better. ML models do the same — they try a prediction, see how wrong they were, and adjust.',
     college:
       'This concept relates to optimization in a loss landscape. The model iteratively updates parameters to minimize a differentiable objective function using gradient information.',
+    interview:
+      'To explain this in an interview, refer to parameter convergence and empirical tradeoffs. We balance learning step sizes (learning rate) to avoid local minima or gradient divergence.',
+    mathematical:
+      'The objective function J(θ) is minimized iteratively. The update rule is θ = θ - η * ∇J(θ), updating parameters in the direction of the steepest descent.',
   },
 }
 

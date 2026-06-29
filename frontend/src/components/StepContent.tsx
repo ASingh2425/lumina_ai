@@ -4,6 +4,7 @@ import { GradientDescentPlayground } from './playgrounds/GradientDescentPlaygrou
 import { LinearRegressionDraw } from './playgrounds/LinearRegressionDraw'
 import { KMeansPlayground } from './playgrounds/KMeansPlayground'
 import { KnnPlayground } from './playgrounds/KnnPlayground'
+import { NumPySlicePlayground } from './playgrounds/NumPySlicePlayground'
 import { MathStepContent, MarkdownContent } from './stepHelpers'
 
 function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
@@ -11,6 +12,7 @@ function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
   if (type === 'linear-regression') return <LinearRegressionDraw />
   if (type === 'k-means') return <KMeansPlayground sandbox={sandbox} />
   if (type === 'knn') return <KnnPlayground sandbox={sandbox} />
+  if (type === 'numpy-slice') return <NumPySlicePlayground />
   return null
 }
 

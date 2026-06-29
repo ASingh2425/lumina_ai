@@ -2,6 +2,65 @@ import type { Lesson } from '../types/lesson'
 
 export const lessons: Lesson[] = [
   {
+    id: 'python-numpy',
+    title: 'Python & NumPy Basics',
+    description: 'Get a visual grip on variables, loops, functions, and the core indexing and slicing syntax of NumPy.',
+    module: 'Python Basics',
+    xpReward: 100,
+    steps: [
+      {
+        id: 'py-story',
+        type: 'story',
+        title: 'Why NumPy?',
+        content:
+          'Python is the language of AI, but native Python lists can be slow when processing millions of data points.\n\nThat\'s why scientists built **NumPy** (Numerical Python). It provides fast, multidimensional arrays and math functions that run in compiled C code underneath.\n\nBefore training a neural network, you must learn to load, index, and slice arrays.',
+      },
+      {
+        id: 'py-visual',
+        type: 'visual',
+        title: 'Dynamic Slicing',
+        content:
+          'This is a 1D NumPy array with 8 items. Adjust the **Start**, **Stop**, and **Step** sliders below to see which elements are selected and watch the slicing syntax update live.',
+        widget: 'numpy-slice',
+      },
+      {
+        id: 'py-quiz',
+        type: 'quiz',
+        title: 'Slice Check',
+        quiz: {
+          prompt: 'For an array arr = np.array([10, 20, 30, 40, 50]), what does arr[1:4] return?',
+          options: [
+            { id: 'a', label: '[20, 30, 40]' },
+            { id: 'b', label: '[10, 20, 30, 40]' },
+            { id: 'c', label: '[20, 30, 40, 50]' },
+            { id: 'd', label: '[30, 40]' },
+          ],
+          correctId: 'a',
+          explanation:
+            'Python indexing is 0-based, and stop indices are exclusive. Index 1 is 20, and index 4 (50) is excluded, so we get elements at indices 1, 2, and 3: [20, 30, 40].',
+        },
+      },
+      {
+        id: 'py-code',
+        type: 'code',
+        title: 'Basic Vector Operations',
+        code: `import numpy as np
+
+# Create arrays
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+
+# Element-wise operations (super fast!)
+print(a + b)  # [5, 7, 9]
+print(a * 2)  # [2, 4, 6]
+
+# Dot product (multiplying elements and summing)
+dot_product = np.dot(a, b)
+print(dot_product)  # 1*4 + 2*5 + 3*6 = 32`,
+      },
+    ],
+  },
+  {
     id: 'gradient-descent',
     title: 'Gradient Descent',
     description: 'Watch a ball roll downhill to find the lowest point — and learn why learning rate matters.',

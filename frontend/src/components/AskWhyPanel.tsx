@@ -47,21 +47,30 @@ export function AskWhyPanel({ context, suggestions = DEFAULT_SUGGESTIONS }: AskW
         </button>
       </div>
 
-      <div className="flex gap-2 px-4 pt-3">
-        {(['beginner', 'college'] as const).map((l) => (
-          <button
-            key={l}
-            type="button"
-            onClick={() => setLevel(l)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-              level === l
-                ? 'bg-[var(--color-accent)] text-white'
-                : 'bg-[var(--color-surface-raised)] text-[#8b93a7] hover:text-white'
-            }`}
-          >
-            {l === 'beginner' ? 'Beginner' : 'College'}
-          </button>
-        ))}
+      <div className="flex flex-wrap gap-1.5 px-4 pt-3">
+        {(['age_10', 'beginner', 'college', 'interview', 'mathematical'] as const).map((l) => {
+          const labels: Record<string, string> = {
+            age_10: 'Age 10',
+            beginner: 'Beginner',
+            college: 'College',
+            interview: 'Interview',
+            mathematical: 'Math',
+          }
+          return (
+            <button
+              key={l}
+              type="button"
+              onClick={() => setLevel(l)}
+              className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                level === l
+                  ? 'bg-[var(--color-accent)] text-white'
+                  : 'bg-[var(--color-surface-raised)] text-[#8b93a7] hover:text-white'
+              }`}
+            >
+              {labels[l]}
+            </button>
+          )
+        })}
       </div>
 
       <div className="flex flex-wrap gap-2 px-4 py-3">
