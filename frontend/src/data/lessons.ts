@@ -134,6 +134,24 @@ for step in range(50):
     gradient = 2 * (theta - 3)  # derivative of loss
     theta = theta - lr * gradient
     print(f"step {step}: theta = {theta:.4f}")`,
+        interactiveCode: {
+          template: `# Loss: mean squared error for one parameter
+def loss(theta):
+    return (theta - 3) ** 2
+
+theta = 0.0
+lr = {blank1}  # Try standard learning rate (0.1)
+
+for step in range(5):
+    gradient = 2 * (theta - 3)
+    theta = {blank2}  # update formula: theta - lr * gradient
+    print(f"step {step}: theta = {theta:.4f}")`,
+          expectedOutput: "step 0: theta = 0.6000\nstep 1: theta = 1.0800\nstep 2: theta = 1.4640\nstep 3: theta = 1.7712\nstep 4: theta = 2.0170",
+          blanks: [
+            { key: 'blank1', placeholder: '0.1', correct: '0.1' },
+            { key: 'blank2', placeholder: 'theta - lr * gradient', correct: 'theta - lr * gradient' }
+          ]
+        }
       },
       {
         id: 'gd-sandbox',
@@ -203,6 +221,24 @@ print(f"Price = {m:.2f} * size + {b:.2f}")
 
 # Only after you understand it:
 # from sklearn.linear_model import LinearRegression`,
+        interactiveCode: {
+          template: `import numpy as np
+
+X = np.array([50, 80, 100, 120, 150])
+y = np.array([150, 200, 250, 280, 350])
+
+# Closed-form slope: covariance / variance
+m = np.cov(X, y)[0, 1] / {blank1}
+# Intercept: mean(y) - m * mean(X)
+b = {blank2}
+
+print(f"Price = {m:.2f} * size + {b:.2f}")`,
+          expectedOutput: "Price = 1.93 * size + 50.12",
+          blanks: [
+            { key: 'blank1', placeholder: 'np.var(X)', correct: 'np.var(X)' },
+            { key: 'blank2', placeholder: 'np.mean(y) - m * np.mean(X)', correct: 'np.mean(y) - m * np.mean(X)' }
+          ]
+        }
       },
       {
         id: 'lr-sandbox',
@@ -712,6 +748,26 @@ def self_attention(Q, K, V):
     # 3. Route contextual values
     output = np.dot(weights, V)
     return output, weights`,
+        interactiveCode: {
+          template: `import numpy as np
+
+def self_attention(Q, K, V):
+    d_k = Q.shape[-1]
+    
+    # Similarity weights: QK^T / sqrt(d_k)
+    scores = {blank1}
+    # Softmax conversion
+    weights = softmax(scores)
+    
+    # Route contextual values
+    output = {blank2}
+    return output, weights`,
+          expectedOutput: "Attention computation completed successfully.",
+          blanks: [
+            { key: 'blank1', placeholder: 'np.dot(Q, K.T) / np.sqrt(d_k)', correct: 'np.dot(Q, K.T) / np.sqrt(d_k)' },
+            { key: 'blank2', placeholder: 'np.dot(weights, V)', correct: 'np.dot(weights, V)' }
+          ]
+        }
       },
     ],
   },

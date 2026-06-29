@@ -28,6 +28,8 @@ function Widget({ type, sandbox }: { type: WidgetType; sandbox?: boolean }) {
   return null
 }
 
+import { InteractiveCodeLab } from './playgrounds/InteractiveCodeLab'
+
 interface StepContentProps {
   step: LessonStep
   onQuizCorrect?: () => void
@@ -89,9 +91,13 @@ export function StepContent({ step, onQuizCorrect }: StepContentProps) {
     return (
       <div>
         {step.content && <div className="mb-4"><MarkdownContent text={step.content} /></div>}
-        <pre className="overflow-x-auto rounded-2xl border border-[var(--color-border)] bg-[#0a0c10] p-5 font-mono text-sm leading-relaxed text-[#a8d4a8]">
-          {step.code}
-        </pre>
+        {step.interactiveCode ? (
+          <InteractiveCodeLab lab={step.interactiveCode} onCorrect={onQuizCorrect} />
+        ) : (
+          <pre className="overflow-x-auto rounded-2xl border border-[var(--color-border)] bg-[#0a0c10] p-5 font-mono text-sm leading-relaxed text-[#a8d4a8]">
+            {step.code}
+          </pre>
+        )}
       </div>
     )
   }

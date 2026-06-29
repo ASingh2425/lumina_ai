@@ -9,6 +9,16 @@ export type StepType =
 
 export type WidgetType = 'gradient-descent' | 'linear-regression' | 'k-means' | 'knn' | 'numpy-slice' | 'decision-tree' | 'dbscan' | 'neural-network' | 'self-attention' | 'rag-pipeline' | 'tokenizer' | 'none'
 
+export interface InteractiveCodeLab {
+  template: string
+  expectedOutput: string
+  blanks: {
+    key: string
+    placeholder: string
+    correct: string
+  }[]
+}
+
 export interface LessonStep {
   id: string
   type: StepType
@@ -17,6 +27,7 @@ export interface LessonStep {
   widget?: WidgetType
   quiz?: QuizQuestion
   code?: string
+  interactiveCode?: InteractiveCodeLab
   formula?: string
   mathParts?: MathPart[]
 }
