@@ -4,11 +4,25 @@ import { LessonShell } from './components/LessonShell'
 import { HomePage } from './pages/HomePage'
 import { lessons, getLesson } from './data/lessons'
 import { useProgress } from './hooks/useProgress'
+import { AuthPages } from './pages/AuthPages'
+import { AdminPortal } from './pages/AdminPortal'
 
 function App() {
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null)
   const [stepIndex, setStepIndex] = useState(0)
   const { progress, completeStep, completeLesson, isStepComplete, isLessonComplete } = useProgress()
+
+  // Routing checks
+  const isAuthenticated = !!localStorage.getItem('token')
+  const isAddressAdmin = window.location.pathname === '/admin'
+
+  if (!isAuthenticated) {
+    return <AuthPages />
+  }
+
+  if (isAddressAdmin) {
+    return <AdminPortal />
+  }
 
   const activeLesson = activeLessonId ? getLesson(activeLessonId) : null
 

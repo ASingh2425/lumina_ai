@@ -19,7 +19,7 @@ function computeStreak(lastDate: string, currentStreak: number): number {
   return 1
 }
 
-function loadProgress(): UserProgress {
+function loadLocalProgress(): UserProgress {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) return { ...DEFAULT_PROGRESS, ...JSON.parse(raw) }
@@ -29,12 +29,69 @@ function loadProgress(): UserProgress {
   return { ...DEFAULT_PROGRESS }
 }
 
-function saveProgress(progress: UserProgress) {
+function saveLocalProgress(progress: UserProgress) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
 }
 
 export function useProgress() {
-  const [progress, setProgress] = useState<UserProgress>(loadProgress)
+  const [progress, setProgress] = useState<UserProgress>(loadLocalProgress)
+
+  // Get current user id
+  const getUserId = (): string => {
+    try {
+      const rawUser = localStorage.getItem('user')
+      if (rawUser) {
+        return JSON.parse(rawUser).id.toString()
+      }
+    } catch {
+      /* ignore */
+    }
+    return "local"
+  }
+
+  // Load progress from backend on mount
+  useEffect(() => {
+    const userId = getUserId()
+    if (userId !== "local") {
+      fetch(`http://localhost:8000/progress/${userId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.user_id) {
+            const updated = {
+              ...progress,
+              xp: data.xp,
+              completedLessons: data.completed_lessons,
+              completedSteps: data.completed_steps
+            }
+            setProgress(updated)
+            saveLocalProgress(updated)
+          }
+        })
+        .catch((err) => console.log("Failed to sync progress:", err))
+    }
+  }, [])
+
+  // Sync progress function
+  const syncToBackend = async (updated: UserProgress) => {
+    const userId = getUserId()
+    if (userId === "local") return
+
+    try {
+      await fetch(`http://localhost:8000/progress/${userId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          xp: updated.xp,
+          streak: updated.streak,
+          completed_lessons: updated.completedLessons,
+          completed_steps: updated.completedSteps
+        })
+      })
+    } catch (err) {
+      console.log("Failed to sync progress to database:", err)
+    }
+  }
 
   useEffect(() => {
     const today = todayString()
@@ -45,14 +102,16 @@ export function useProgress() {
         lastActiveDate: today,
       }
       setProgress(updated)
-      saveProgress(updated)
+      saveLocalProgress(updated)
+      syncToBackend(updated)
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const addXp = useCallback((amount: number) => {
     setProgress((prev) => {
       const updated = { ...prev, xp: prev.xp + amount }
-      saveProgress(updated)
+      saveLocalProgress(updated)
+      syncToBackend(updated)
       return updated
     })
   }, [])
@@ -71,7 +130,8 @@ export function useProgress() {
         completedLessons: prev.completedLessons,
         lastActiveDate: todayString(),
       }
-      saveProgress(updated)
+      saveLocalProgress(updated)
+      syncToBackend(updated)
       return updated
     })
   }, [])
@@ -85,7 +145,8 @@ export function useProgress() {
         completedLessons: [...prev.completedLessons, lessonId],
         lastActiveDate: todayString(),
       }
-      saveProgress(updated)
+      saveLocalProgress(updated)
+      syncToBackend(updated)
       return updated
     })
   }, [])
