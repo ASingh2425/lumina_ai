@@ -50,11 +50,16 @@ FALLBACK = {
     ),
 }
 
-
 def ask_tutor(question: str, level: str, context: str) -> str:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        return FALLBACK.get(level, FALLBACK["beginner"])
+        fallback_desc = FALLBACK.get(level, FALLBACK["beginner"])
+        return (
+            f"[OFFLINE MOCK RESPONSE] To get real AI answers, please configure your "
+            f"`OPENAI_API_KEY` in `backend/.env`.\n\n"
+            f"Regarding your question: \"{question}\"\n\n"
+            f"Here is a concept review ({level}):\n{fallback_desc}"
+        )
 
     client = OpenAI(api_key=api_key)
     system = LEVEL_PROMPTS.get(level, LEVEL_PROMPTS["beginner"])
