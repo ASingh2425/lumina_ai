@@ -35,7 +35,7 @@ export function AskWhyPanel({ context, suggestions = DEFAULT_SUGGESTIONS }: AskW
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex w-[min(400px,calc(100vw-2rem))] flex-col rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-overlay)] shadow-2xl">
+    <div className="fixed bottom-6 right-6 z-40 flex w-[min(400px,calc(100vw-2rem))] max-h-[min(600px,calc(100vh-4rem))] flex-col rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-overlay)] shadow-2xl">
       <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
         <h3 className="font-semibold">Ask Why</h3>
         <button
@@ -47,75 +47,78 @@ export function AskWhyPanel({ context, suggestions = DEFAULT_SUGGESTIONS }: AskW
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-1.5 px-4 pt-3">
-        {(['age_10', 'beginner', 'college', 'interview', 'mathematical'] as const).map((l) => {
-          const labels: Record<string, string> = {
-            age_10: 'Age 10',
-            beginner: 'Beginner',
-            college: 'College',
-            interview: 'Interview',
-            mathematical: 'Math',
-          }
-          return (
-            <button
-              key={l}
-              type="button"
-              onClick={() => setLevel(l)}
-              className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors ${
-                level === l
-                  ? 'bg-[var(--color-accent)] text-white'
-                  : 'bg-[var(--color-surface-raised)] text-[#8b93a7] hover:text-white'
-              }`}
-            >
-              {labels[l]}
-            </button>
-          )
-        })}
-      </div>
-
-      <div className="flex flex-wrap gap-2 px-4 py-3">
-        {suggestions.map((s) => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => {
-              setQuestion(s)
-              ask(s)
-            }}
-            className="rounded-lg bg-[var(--color-surface-raised)] px-3 py-1.5 text-xs text-[#a8b0c4] transition-colors hover:bg-[var(--color-border)] hover:text-white"
-          >
-            {s}
-          </button>
-        ))}
-      </div>
-
-      <div className="px-4 pb-2">
-        <input
-          type="text"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
-          placeholder="Why does this happen?"
-          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-sm outline-none focus:border-[var(--color-accent)]"
-        />
-      </div>
-
-      <div className="px-4 pb-4">
-        <button
-          type="button"
-          onClick={handleAsk}
-          disabled={loading || !question.trim()}
-          className="w-full rounded-xl bg-[var(--color-accent)] py-2.5 text-sm font-semibold text-white disabled:opacity-50"
-        >
-          {loading ? 'Thinking…' : 'Ask'}
-        </button>
-      </div>
-
-      {answer && (
-        <div className="border-t border-[var(--color-border)] px-4 py-3 text-sm leading-relaxed text-[#c4cad8]">
-          {answer}
+      <div className="flex-1 overflow-y-auto">
+        <div className="flex flex-wrap gap-1.5 px-4 pt-3">
+          {(['age_10', 'beginner', 'college', 'interview', 'mathematical'] as const).map((l) => {
+            const labels: Record<string, string> = {
+              age_10: 'Age 10',
+              beginner: 'Beginner',
+              college: 'College',
+              interview: 'Interview',
+              mathematical: 'Math',
+            }
+            return (
+              <button
+                key={l}
+                type="button"
+                onClick={() => setLevel(l)}
+                className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                  level === l
+                    ? 'bg-[var(--color-accent)] text-white'
+                    : 'bg-[var(--color-surface-raised)] text-[#8b93a7] hover:text-white'
+                }`}
+              >
+                {labels[l]}
+              </button>
+            )
+          })}
         </div>
-      )}
+
+        <div className="flex flex-wrap gap-2 px-4 py-3">
+          {suggestions.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => {
+                setQuestion(s)
+                ask(s)
+              }}
+              className="rounded-lg bg-[var(--color-surface-raised)] px-3 py-1.5 text-xs text-[#a8b0c4] transition-colors hover:bg-[var(--color-border)] hover:text-white"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+
+        <div className="px-4 pb-2">
+          <input
+            type="text"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
+            placeholder="Why does this happen?"
+            className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-sm outline-none focus:border-[var(--color-accent)]"
+          />
+        </div>
+
+        <div className="px-4 pb-4">
+          <button
+            type="button"
+            onClick={handleAsk}
+            disabled={loading || !question.trim()}
+            className="w-full rounded-xl bg-[var(--color-accent)] py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+          >
+            {loading ? 'Thinking…' : 'Ask'}
+          </button>
+        </div>
+
+        {answer && (
+          <div className="border-t border-[var(--color-border)] px-4 py-3 text-sm leading-relaxed text-[#c4cad8] whitespace-pre-wrap">
+            {answer}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
+
