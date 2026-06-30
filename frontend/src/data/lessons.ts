@@ -67,7 +67,7 @@ print(dot_product)  # 1*4 + 2*5 + 3*6 = 32`,
     description: 'Walk down non-convex loss valleys, adjust learning rates, choose batch sizes, and visual model convergence.',
     module: 'Optimization',
     xpReward: 150,
-    worldId: 'world-2',
+    worldId: 'world-3',
     steps: [
       {
         id: 'gd-story',
@@ -185,7 +185,7 @@ for step in range(5):
     description: 'Drag outliers, inject noise, adjust the slopes, and watch line fits update live with mean squared error metrics.',
     module: 'Supervised Learning',
     xpReward: 120,
-    worldId: 'world-3',
+    worldId: 'world-4',
     steps: [
       {
         id: 'lr-story',
@@ -313,7 +313,7 @@ print(f"Price = {m:.2f} * size + {b:.2f}")`,
     description: 'Find similar groups in unstructured datasets. Watch centroids update iteratively as points assign to coordinates.',
     module: 'Unsupervised Learning',
     xpReward: 140,
-    worldId: 'world-3',
+    worldId: 'world-5',
     steps: [
       {
         id: 'km-story',
@@ -389,7 +389,7 @@ def fit_kmeans(X, K, max_iters=10):
     description: 'Classify data based on proximity values. Tweak K neighbors, choose distance metrics, and see classification boundaries.',
     module: 'Supervised Learning',
     xpReward: 130,
-    worldId: 'world-3',
+    worldId: 'world-4',
     steps: [
       {
         id: 'knn-story',
@@ -480,7 +480,7 @@ def predict_knn(X_train, y_train, x_query, k=3):
     description: 'Inspect Entropy and Information Gain. Split nodes visually and traverse the tree to make predictions.',
     module: 'Supervised Learning',
     xpReward: 150,
-    worldId: 'world-3',
+    worldId: 'world-4',
     steps: [
       {
         id: 'dt-story',
@@ -578,7 +578,7 @@ def find_best_split(X, y):
     description: 'Cluster density coordinates. Customize Epsilon and Min Points parameters to separate noise from patterns.',
     module: 'Unsupervised Learning',
     xpReward: 160,
-    worldId: 'world-3',
+    worldId: 'world-5',
     steps: [
       {
         id: 'dbs-story',
@@ -648,7 +648,7 @@ def dbscan(X, eps, min_pts):
     module: 'Deep Learning',
     xpReward: 300,
     isPremium: true,
-    worldId: 'world-4',
+    worldId: 'world-6',
     steps: [
       {
         id: 'nn-story',
@@ -810,7 +810,7 @@ def self_attention(Q, K, V):
     module: 'Generative AI',
     xpReward: 350,
     isPremium: true,
-    worldId: 'world-5',
+    worldId: 'world-11',
     steps: [
       {
         id: 'rag-story',
@@ -883,7 +883,7 @@ def self_attention(Q, K, V):
     module: 'Generative AI',
     xpReward: 250,
     isPremium: true,
-    worldId: 'world-5',
+    worldId: 'world-7',
     steps: [
       {
         id: 'tok-story',
@@ -1042,6 +1042,7 @@ print(vocab) # {'l ea r n i n g': 5, 'n e u r a l': 3}`,
     description: 'Ensemble multiple decision trees together. Witness how average voting smooths splits and prevents overfitting.',
     module: 'Classification',
     xpReward: 160,
+    worldId: 'world-4',
     steps: [
       {
         id: 'rf-story',
@@ -1296,6 +1297,155 @@ def classify_text(text):
 
 print(classify_text("Win a free prize today")) # Prints Spam
 print(classify_text("Meeting tomorrow to discuss project details")) # Prints Ham`,
+      },
+    ],
+  },
+  {
+    id: 'data-thinking',
+    title: 'Thinking in Data & Feature Engineering',
+    description: 'Learn to distinguish features from labels, handle missing dataset row values, and prevent bias.',
+    module: 'Data Preparation',
+    xpReward: 100,
+    worldId: 'world-2',
+    steps: [
+      {
+        id: 'data-story',
+        type: 'story',
+        title: 'Rows, Columns, and Features',
+        content:
+          'Before applying algorithms, you must understand your ingredients: data.\n\nIn standard datasets, rows represent individual samples (e.g., houses, users), while columns represent **features** (attributes describing the sample, like size, age) and **labels** (the target value we want to predict, like price).',
+      },
+      {
+        id: 'data-code',
+        type: 'code',
+        title: 'Cleaning Messy Data with Pandas',
+        code: `import pandas as pd
+import numpy as np
+
+# Load raw sample dataset
+data = {
+    "Age": [25, np.nan, 30, 22, 30],
+    "Salary": [50000, 60000, np.nan, 45000, 60000]
+}
+df = pd.DataFrame(data)
+
+# 1. Fill missing values with column mean
+df["Age"] = df["Age"].fillna(df["Age"].mean())
+df["Salary"] = df["Salary"].fillna(df["Salary"].mean())
+
+# 2. Drop duplicate rows
+df = df.drop_duplicates()
+
+print("Cleaned Dataset:")
+print(df)
+print("No more missing values or duplicates remaining!")`,
+      },
+    ],
+  },
+  {
+    id: 'attention-paper',
+    title: 'Attention Is All You Need (Landmark Paper)',
+    description: 'Walk through the core self-attention equations and trace token key-query vectors.',
+    module: 'AI Papers Club',
+    xpReward: 300,
+    worldId: 'bonus-papers',
+    isPremium: true,
+    steps: [
+      {
+        id: 'paper-story',
+        type: 'story',
+        title: 'The Transformer Revolution',
+        content:
+          'In 2017, Google researchers published a landmark paper: **"Attention Is All You Need"**.\n\nIt threw away complex recurrent loops (RNNs) and replaced them with a simple mechanism called **Self-Attention**. This allows the model to process all words in a sentence simultaneously and capture long-distance contextual links instantly.',
+      },
+      {
+        id: 'paper-math',
+        type: 'math',
+        title: 'Scaled Dot-Product Attention',
+        formula: 'Attention(Q, K, V) = Softmax( Q Kᵀ / √d_k ) V',
+        content: 'The core formula calculating how much attention each word vector pays to other word vectors is defined as:',
+        mathParts: [
+          { symbol: 'Q (Query)', explanation: 'Vector representing the current token we are checking context for.' },
+          { symbol: 'K (Key)', explanation: 'Vector representing all other tokens we are comparing against.' },
+          { symbol: 'V (Value)', explanation: 'Vector containing the actual semantic content of each token.' },
+          { symbol: 'd_k', explanation: 'Dimensionality scale factor — stabilizes gradients during Softmax.' },
+        ],
+      },
+      {
+        id: 'paper-code',
+        type: 'code',
+        title: 'Calculating Dot-Product Attention',
+        code: `import numpy as np
+
+# Mock 2-word sequence embedding dimension (d_k = 3)
+Q = np.array([[1.0, 0.0, -1.0]])
+K = np.array([[1.0, 1.0, 0.0], [0.0, 1.0, 1.0]])
+V = np.array([[10.0, 20.0], [30.0, 40.0]])
+
+# 1. Compute query-key dot products
+scores = np.dot(Q, K.T) / np.sqrt(3)
+
+# 2. Apply Softmax to get attention weights
+weights = np.exp(scores) / np.sum(np.exp(scores))
+
+# 3. Multiply weights by values
+output = np.dot(weights, V)
+print("Attention weights shape:", weights)
+print("Context-enriched output:", output)`,
+      },
+    ],
+  },
+  {
+    id: 'inside-decision-tree',
+    title: 'Traversing the Decision Tree Split Room',
+    description: 'Step inside the splits. See how feature thresholds partition clusters and make terminal leaf predictions.',
+    module: 'Inside the Model',
+    xpReward: 250,
+    worldId: 'bonus-inside',
+    isPremium: true,
+    steps: [
+      {
+        id: 'inside-story',
+        type: 'story',
+        title: 'Become the Data Point',
+        content:
+          'Imagine you are a single data point: `[Age: 28, Salary: 95000]`. You enter the Decision Tree.\n\nYou stand in the root room. On the wall is a condition: "Is Salary > 80000?". Since your salary satisfies this, you are guided through the right door into the next split room. You continue traversal until reaching a leaf room labeled "Class: Buyer". This is model execution from the inside!',
+      },
+    ],
+  },
+  {
+    id: 'system-design-interview',
+    title: 'Mock Recruiter: LLM RAG Design',
+    description: 'Practice case study interview questions regarding RAG chunking sizes and search latency limitations.',
+    module: 'Interview Prep',
+    xpReward: 200,
+    worldId: 'bonus-interviews',
+    isPremium: true,
+    steps: [
+      {
+        id: 'interview-story',
+        type: 'story',
+        title: 'The Scenario: Designing a Corporate Assistant',
+        content:
+          'Your recruiter asks: "We want to deploy a RAG system over 10,000 PDF documents. If the search query latency is too high, how would you diagnose and optimize it?"\n\nTo pass, you must balance chunk overlap metrics, vector index scaling (like hierarchical navigable small world - HNSW), and model quantizations. Let us explore the system design answers.',
+      },
+    ],
+  },
+  {
+    id: 'netflix-recommendation-prod',
+    title: 'Production Case: Netflix Churn Optimizer',
+    description: 'Learn how collaborative filtering and deep rank embeddings feed recommendation items to prevent subscriber bounce.',
+    module: 'AI in Industry',
+    xpReward: 250,
+    worldId: 'bonus-industry',
+    isPremium: true,
+    steps: [
+      {
+        id: 'netflix-story',
+        type: 'story',
+        title: 'The Retention Engine',
+        content:
+          'Netflix uses a multi-layered hybrid recommendation architecture. First, candidate generation algorithms filter millions of titles down to hundreds using fast Collaborative Filtering. Next, a deep ranking neural network sorts these candidates by predicting probability of watch completion. If prediction is too slow, users bounce — hence the production need to optimize latency.',
       },
     ],
   },
