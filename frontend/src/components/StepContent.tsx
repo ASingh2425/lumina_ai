@@ -21,6 +21,10 @@ import { ProjectPushPlayground } from './playgrounds/ProjectPushPlayground'
 import { NetflixSimulator } from './playgrounds/NetflixSimulator'
 import { PythonCodeConsole } from './playgrounds/PythonCodeConsole'
 
+import { LossLandscape3DPlayground } from './playgrounds/LossLandscape3DPlayground'
+import { AutogradPlayground } from './playgrounds/AutogradPlayground'
+import { TransformerAttentionPlayground } from './playgrounds/TransformerAttentionPlayground'
+
 function Widget({ type, step, sandbox }: { type: WidgetType; step: LessonStep; sandbox?: boolean }) {
   const topic = step.id.startsWith('gd-')
     ? 'gradient-descent'
@@ -45,6 +49,11 @@ function Widget({ type, step, sandbox }: { type: WidgetType; step: LessonStep; s
   if (type === 'interview-recruiter') return <InterviewPlayground topic={topic} />
   if (type === 'project-push') return <ProjectPushPlayground topic={topic} />
   if (type === 'netflix-simulator') return <NetflixSimulator />
+  
+  if (type === 'loss-landscape-3d') return <LossLandscape3DPlayground />
+  if (type === 'autograd') return <AutogradPlayground />
+  if (type === 'transformer-attention') return <TransformerAttentionPlayground />
+  
   return null
 }
 

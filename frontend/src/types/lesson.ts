@@ -7,7 +7,7 @@ export type StepType =
   | 'quiz'
   | 'sandbox'
 
-export type WidgetType = 'gradient-descent' | 'linear-regression' | 'k-means' | 'knn' | 'numpy-slice' | 'decision-tree' | 'dbscan' | 'neural-network' | 'self-attention' | 'rag-pipeline' | 'tokenizer' | 'cnn' | 'pca' | 'random-forest' | 'interview-recruiter' | 'project-push' | 'netflix-simulator' | 'none'
+export type WidgetType = 'gradient-descent' | 'linear-regression' | 'k-means' | 'knn' | 'numpy-slice' | 'decision-tree' | 'dbscan' | 'neural-network' | 'self-attention' | 'rag-pipeline' | 'tokenizer' | 'cnn' | 'pca' | 'random-forest' | 'interview-recruiter' | 'project-push' | 'netflix-simulator' | 'loss-landscape-3d' | 'autograd' | 'transformer-attention' | 'none'
 
 export interface InteractiveCodeLab {
   template: string

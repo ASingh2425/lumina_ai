@@ -2660,6 +2660,57 @@ print("Noise Injected:", np.round(noise_injected, 2))`,
       },
     ],
   },
+  {
+    id: 'loss-landscape-3d',
+    title: '3D Loss Landscape Explorer',
+    description: 'Move from 2D curves to a WebGL 3D landscape to visualize optimization.',
+    module: 'Optimization',
+    xpReward: 200,
+    worldId: 'world-3',
+    steps: [
+      {
+        id: 'loss-3d-visual',
+        type: 'visual',
+        title: 'WebGL Loss Landscape',
+        content: 'Rotate, pan, and zoom to explore a non-convex 3D loss surface. Compare how SGD vs Adam navigates the valley!',
+        widget: 'loss-landscape-3d'
+      }
+    ]
+  },
+  {
+    id: 'mini-autograd',
+    title: 'Mini-PyTorch Autograd Engine',
+    description: 'Build intuition for how PyTorch computes gradients automatically through a computational graph.',
+    module: 'Deep Learning Basics',
+    xpReward: 150,
+    worldId: 'world-6',
+    steps: [
+      {
+        id: 'autograd-visual',
+        type: 'experiment',
+        title: 'Step-by-Step Backprop',
+        content: 'Interact with the nodes to change input values, run a forward pass, and then click backward to watch gradients cascade recursively via the chain rule.',
+        widget: 'autograd'
+      }
+    ]
+  },
+  {
+    id: 'transformer-attention-map',
+    title: 'Visual Transformer Attention',
+    description: 'See live text-based attention weights as you type.',
+    module: 'Transformers',
+    xpReward: 200,
+    worldId: 'world-11',
+    steps: [
+      {
+        id: 'attention-visual',
+        type: 'visual',
+        title: 'Live Attention Map',
+        content: 'Type a sentence below and visualize the N x N attention matrix. Hover over cells to see how strongly each word attends to others.',
+        widget: 'transformer-attention'
+      }
+    ]
+  }
 ]
 
 
