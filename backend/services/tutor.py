@@ -56,7 +56,7 @@ def call_gemini(question: str, level: str, context: str, api_key: str) -> str:
     system = LEVEL_PROMPTS.get(level, LEVEL_PROMPTS["beginner"])
     user_msg = f"Context: {context}\n\nQuestion: {question}"
     
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     payload = {
         "contents": [{
             "parts": [{"text": user_msg}]
