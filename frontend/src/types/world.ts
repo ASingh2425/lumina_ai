@@ -141,6 +141,26 @@ export const WORLDS: World[] = [
     category: 'deep-learning-genai',
     isPremium: true
   },
+  {
+    id: 'world-13',
+    title: 'World 13 — LLM Alignment & Finetuning',
+    subtitle: 'LoRA, PEFT & DPO Tuning',
+    description: 'Learn parameter-efficient LLM finetuning via low-rank adapters (LoRA) and align models with human preference metrics (DPO).',
+    icon: '⚖️',
+    color: 'from-purple-500/20 to-pink-500/20 border-purple-500/30 text-purple-400',
+    category: 'deep-learning-genai',
+    isPremium: true
+  },
+  {
+    id: 'world-14',
+    title: 'World 14 — Generative Media & Diffusion',
+    subtitle: 'Image Generation & DDPM',
+    description: 'Construct denoising diffusion probabilistic models, manage noise schedules, and visual generative U-Net networks.',
+    icon: '🎨',
+    color: 'from-emerald-500/20 to-teal-500/20 border-emerald-500/30 text-emerald-400',
+    category: 'deep-learning-genai',
+    isPremium: true
+  },
 
   // --- STAGE 4: PREMIUM BONUS CONTENT ---
   {

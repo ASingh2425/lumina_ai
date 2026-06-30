@@ -2377,7 +2377,291 @@ for epoch in range(len(train_loss)):
       },
     ],
   },
+  {
+    id: 'experiment-tracking',
+    title: 'Model Registry & Experiment Tracking',
+    description: 'Log hyper-parameters, metric parameters, version checkpoints, and manage training history.',
+    module: 'Model Production',
+    xpReward: 120,
+    worldId: 'world-10',
+    steps: [
+      {
+        id: 'track-story',
+        type: 'story',
+        title: 'The Lab Notebook',
+        content: 'When training machine learning models, a tiny change in learning rate or batch size can drastically alter accuracy.\n\nWithout a structured system, you will quickly lose track of which configurations produced which results. This is where **Experiment Tracking** comes in.\n\nBy logging every training run\'s hyperparameters, output metrics, and model checkpoints, you ensure reproducibility and can select the absolute best model version for production.',
+      },
+      {
+        id: 'track-quiz',
+        type: 'quiz',
+        title: 'Tracking Core',
+        quiz: {
+          prompt: 'Which of the following is typically logged as a hyperparameter rather than a metric in experiment tracking?',
+          options: [
+            { id: 'a', label: 'Validation Loss' },
+            { id: 'b', label: 'Learning Rate' },
+            { id: 'c', label: 'F1-Score' },
+            { id: 'd', label: 'Inference Latency' },
+          ],
+          correctId: 'b',
+          explanation: 'Hyperparameters are configurations set before training (like learning rate), whereas metrics are values observed during or after training (like loss or accuracy).',
+        },
+      },
+      {
+        id: 'track-code',
+        type: 'code',
+        title: 'Mock Experiment Logger',
+        code: `# Implement a simple experiment tracker to log metrics and parameters
+class ExperimentTracker:
+    def __init__(self, run_name):
+        self.run_name = run_name
+        self.params = {}
+        self.metrics = {}
+
+    def log_param(self, key, value):
+        self.params[key] = value
+
+    def log_metric(self, key, value):
+        if key not in self.metrics:
+            self.metrics[key] = []
+        self.metrics[key].append(value)
+
+# Start run
+tracker = ExperimentTracker("resnet_v2_training")
+tracker.log_param("learning_rate", 0.001)
+tracker.log_param("optimizer", "Adam")
+
+# Train simulation
+for epoch in range(3):
+    accuracy = 0.6 + epoch * 0.1
+    tracker.log_metric("accuracy", accuracy)
+
+print("Logged Parameters:", tracker.params)
+print("Logged Metrics:", tracker.metrics)`,
+      },
+    ],
+  },
+  {
+    id: 'lora-finetuning',
+    title: 'LoRA: Low-Rank Adaptation',
+    description: 'Finetune massive LLMs efficiently by adding trainable low-rank decomposition matrices while freezing base model weights.',
+    module: 'LLM Alignment',
+    xpReward: 200,
+    worldId: 'world-13',
+    steps: [
+      {
+        id: 'lora-story',
+        type: 'story',
+        title: 'Freezing the Base',
+        content: 'Finetuning a model with 70 billion parameters requires massive compute because calculating gradients for all weights takes huge GPU memory.\n\n**Low-Rank Adaptation (LoRA)** solves this. It freezes the original model weights ($W_0$) and adds a tiny, separate set of adapter weights ($\Delta W$) next to them.\n\nInstead of updating all weights, we only update the small adapter matrices, reducing GPU memory requirements by up to 90%!',
+      },
+      {
+        id: 'lora-math',
+        type: 'math',
+        title: 'Low-Rank Matrix Decomposition',
+        formula: '\\Delta W = B \\times A',
+        content: 'If the base weight matrix has dimensions $d \\times k$, updating it directly requires $d \\times k$ parameters. Instead, we decompose the update into two low-rank matrices: $A$ (size $r \\times k$) and $B$ (size $d \\times r$), where the rank $r \\ll d, k$. The number of parameters drops from $d \\times k$ to $r \\times (d + k)$.',
+        mathParts: [
+          { symbol: 'W_0', explanation: 'Original frozen weight matrix of the LLM.' },
+          { symbol: 'B', explanation: 'Trainable low-rank matrix of size d x r, initialized to zero.' },
+          { symbol: 'A', explanation: 'Trainable low-rank matrix of size r x k, initialized with random Gaussian values.' },
+        ],
+      },
+      {
+        id: 'lora-quiz',
+        type: 'quiz',
+        title: 'Rank Parameters',
+        quiz: {
+          prompt: 'For a weight matrix of size 4096 x 4096, using a LoRA rank r = 8, how many parameters are trainable compared to the full matrix?',
+          options: [
+            { id: 'a', label: '65,536 trainable (vs 16,777,216 total)' },
+            { id: 'b', label: '1,024 trainable (vs 16,777,216 total)' },
+            { id: 'c', label: '262,144 trainable (vs 8,192 total)' },
+            { id: 'd', label: '16,777,216 trainable' },
+          ],
+          correctId: 'a',
+          explanation: 'The parameters of two low-rank matrices are r * (d + k). Here, 8 * (4096 + 4096) = 8 * 8192 = 65,536 trainable parameters, which is less than 0.4% of the original 16.7 million weights!',
+        },
+      },
+      {
+        id: 'lora-code',
+        type: 'code',
+        title: 'LoRA Forward Pass',
+        code: `import numpy as np
+
+# Simple simulation of LoRA forward pass: h = W_0 * x + (B * A) * x
+x = np.array([[1.0, 2.0]]) # Input vector (1 x 2)
+
+# Frozen Base weight (2 x 2)
+W_0 = np.array([[0.5, -0.2], 
+                [0.1,  0.8]])
+
+# LoRA Adapters with rank r = 1
+A = np.array([[0.1, -0.3]]) # (r x k) -> (1 x 2)
+B = np.array([[0.0], 
+              [0.2]])       # (d x r) -> (2 x 1)
+
+# Base output
+base_out = np.dot(x, W_0.T)
+
+# Adapter output
+delta_W = np.dot(B, A)
+adapter_out = np.dot(x, delta_W.T)
+
+# Final forward pass combined
+total_out = base_out + adapter_out
+print("Base Output:", base_out)
+print("LoRA Output Contribution:", adapter_out)
+print("Combined Forward Pass:", total_out)`,
+      },
+    ],
+  },
+  {
+    id: 'dpo-alignment',
+    title: 'DPO: Direct Preference Optimization',
+    description: 'Align large language models with human preferences directly using pairwise token classification, skipping reinforcement learning loops.',
+    module: 'LLM Alignment',
+    xpReward: 200,
+    worldId: 'world-13',
+    steps: [
+      {
+        id: 'dpo-story',
+        type: 'story',
+        title: 'Aligning Without Rewards',
+        content: 'Standard LLM alignment (RLHF) requires training a separate "Reward Model" to score outputs, then running a complex reinforcement learning algorithm (PPO) which is notoriously unstable.\n\n**Direct Preference Optimization (DPO)** cuts through this. It mathematically proves that you can optimize the model directly on pairwise preferences (a "preferred" output $y_w$ and a "dispreferred" output $y_l$ for the same prompt).\n\nBy treating alignment as a simple classification problem, DPO is highly stable, faster, and achieves state-of-the-art results.',
+      },
+      {
+        id: 'dpo-math',
+        type: 'math',
+        title: 'The DPO Objective Function',
+        formula: 'L_{DPO} = -\\mathbb{E}_{(x, y_w, y_l)} [\\log \\sigma (\\beta \\log \\frac{\\pi_\\theta(y_w|x)}{\\pi_{ref}(y_w|x)} - \\beta \\log \\frac{\\pi_\\theta(y_l|x)}{\\pi_{ref}(y_l|x)})]',
+        content: 'DPO maximizes the log-likelihood of preferred outputs $y_w$ relative to the reference model $\\pi_{ref}$, while minimizing the likelihood of dispreferred outputs $y_l$. $\\sigma$ is the sigmoid function, and $\\beta$ controls how close the model stays to the reference model.',
+        mathParts: [
+          { symbol: '\\pi_\\theta', explanation: 'The model weights we are training.' },
+          { symbol: '\\pi_{ref}', explanation: 'The frozen base model weights before alignment.' },
+          { symbol: '\\beta', explanation: 'Scaling parameter regulating the KL-divergence penalty.' },
+        ],
+      },
+      {
+        id: 'dpo-quiz',
+        type: 'quiz',
+        title: 'Pref Check',
+        quiz: {
+          prompt: 'In DPO, what does the optimizer do if the trained model increases the probability of the dispreferred output relative to the reference model?',
+          options: [
+            { id: 'a', label: 'Increases the loss term, penalizing the model' },
+            { id: 'b', label: 'Rewards the model' },
+            { id: 'c', label: 'Freezes model weights' },
+            { id: 'd', label: 'Initializes a new reference model' },
+          ],
+          correctId: 'a',
+          explanation: 'DPO penalizes the model (increases the loss) if the probability ratio of the dispreferred completion relative to reference model increases, training the model to steer away from negative behaviors.',
+        },
+      },
+      {
+        id: 'dpo-code',
+        type: 'code',
+        title: 'Calculating DPO Loss',
+        code: `import numpy as np
+
+# Simple simulation of DPO loss step for a single prompt
+def compute_dpo_loss(policy_logps_w, ref_logps_w, policy_logps_l, ref_logps_l, beta=0.1):
+    # Calculate log-likelihood ratios for preferred (w) and dispreferred (l) outputs
+    ratio_w = policy_logps_w - ref_logps_w
+    ratio_l = policy_logps_l - ref_logps_l
+    
+    # Sigmoid argument
+    logits = beta * (ratio_w - ratio_l)
+    
+    # Compute binary cross-entropy loss: -log(sigmoid(logits))
+    loss = -np.log(1.0 / (1.0 + np.exp(-logits)))
+    return loss
+
+# Log probabilities from current policy and reference model
+# (w = preferred output, l = dispreferred output)
+policy_w, ref_w = -2.5, -3.0  # Policy improved on preferred
+policy_l, ref_l = -5.0, -4.5  # Policy worsened on dispreferred
+
+loss_val = compute_dpo_loss(policy_w, ref_w, policy_l, ref_l)
+print(f"DPO Loss Value: {loss_val:.4f}")`,
+      },
+    ],
+  },
+  {
+    id: 'diffusion-ddpm',
+    title: 'Denoising Diffusion Models',
+    description: 'Learn image generation by mapping the forward noise addition and reverse denoising steps of a Diffusion model.',
+    module: 'Generative Media',
+    xpReward: 200,
+    worldId: 'world-14',
+    steps: [
+      {
+        id: 'diff-story',
+        type: 'story',
+        title: 'Sculpting the Static',
+        content: 'If you look at TV static, it looks completely random. But what if a neural network could clean that static step-by-step to reveal a beautiful photograph?\n\nThat is **Diffusion**.\n\nWe train a model by taking a real image and slowly adding Gaussian noise to it over hundreds of steps until it is pure static (the **Forward Process**).\n\nThen, we train a neural network (typically a U-Net) to predict exactly how much noise was added at each step, allowing us to generate completely new images from pure random noise (the **Reverse Process**).',
+      },
+      {
+        id: 'diff-math',
+        type: 'math',
+        title: 'Noise Scheduling and Diffusion',
+        formula: 'q(x_t | x_0) = \\sqrt{\\bar{\\alpha}_t}x_0 + \\sqrt{1 - \\bar{\\alpha}_t}\\epsilon',
+        content: 'Thanks to mathematical formulations, we do not need to step through the forward process sequentially. We can calculate the noisy image $x_t$ at any step $t$ directly from the original image $x_0$ using the cumulative variance multiplier $\\bar{\\alpha}_t$, which is defined by the variance schedule $\\beta_t$.',
+        mathParts: [
+          { symbol: 'x_0', explanation: 'Original noise-free training image.' },
+          { symbol: '\\beta_t', explanation: 'Variance scheduler controlling how much noise is added at step t.' },
+          { symbol: '\\bar{\\alpha}_t', explanation: 'Cumulative product of (1 - beta_i) from step 1 to t.' },
+        ],
+      },
+      {
+        id: 'diff-quiz',
+        type: 'quiz',
+        title: 'Denoising Step',
+        quiz: {
+          prompt: 'What is the role of the U-Net neural network during the reverse process of a diffusion model?',
+          options: [
+            { id: 'a', label: 'To predict the noise added at a given step' },
+            { id: 'b', label: 'To add random noise to the clean image' },
+            { id: 'c', label: 'To classify the image category' },
+            { id: 'd', label: 'To compress the image into JPEG format' },
+          ],
+          correctId: 'a',
+          explanation: 'The U-Net is trained to predict the noise vector that was added to the image at a specific time step, allowing the reverse process to subtract it and reconstruct a cleaner image.',
+        },
+      },
+      {
+        id: 'diff-code',
+        type: 'code',
+        title: 'Simulating Noise Injection',
+        code: `import numpy as np
+
+# Simulate the forward diffusion step: adding noise to a 1D pixel array
+def add_noise_to_image(x_0, t, beta_schedule):
+    # Calculate alphas
+    alphas = 1.0 - beta_schedule
+    alphas_bar = np.prod(alphas[:t])
+    
+    # Generate Gaussian noise
+    noise = np.random.normal(size=x_0.shape)
+    
+    # Formula: x_t = sqrt(alpha_bar) * x_0 + sqrt(1 - alpha_bar) * noise
+    x_t = np.sqrt(alphas_bar) * x_0 + np.sqrt(1.0 - alphas_bar) * noise
+    return x_t, noise
+
+# 8 pixels representing a simple edge gradient
+clean_image = np.array([0.1, 0.2, 0.3, 0.4, 0.6, 0.7, 0.8, 0.9])
+betas = np.linspace(0.001, 0.02, 100) # 100 step schedule
+
+# Add noise at step 20
+noisy_image, noise_injected = add_noise_to_image(clean_image, 20, betas)
+print("Clean Image:", clean_image)
+print("Noisy Image (Step 20):", np.round(noisy_image, 2))
+print("Noise Injected:", np.round(noise_injected, 2))`,
+      },
+    ],
+  },
 ]
+
 
 export function getLesson(id: string): Lesson | undefined {
   return lessons.find((l) => l.id === id)
