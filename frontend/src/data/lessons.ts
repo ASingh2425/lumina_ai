@@ -1449,6 +1449,196 @@ print("Context-enriched output:", output)`,
       },
     ],
   },
+  {
+    id: 'ai-careers-ethics',
+    title: 'AI Careers & Ethics',
+    description: 'Understand narrow AI vs AGI, algorithmic bias, copyright concerns, and map your path as an AI Engineer.',
+    module: 'Foundations',
+    xpReward: 90,
+    worldId: 'world-0',
+    steps: [
+      {
+        id: 'eth-story',
+        type: 'story',
+        title: 'Ethics in the AI Age',
+        content:
+          'As AI systems grow in power, so do our responsibilities.\n\nFrom bias in datasets to privacy concerns, hallucinating text, and copyright disputes — building responsible AI is not optional. AI Engineers must understand how data limits translate to real-world failures.',
+      },
+    ],
+  },
+  {
+    id: 'python-basics',
+    title: 'Python Syntax & Logic',
+    description: 'Learn variables, conditions, loops, functions, lists, and dicts — the core language of ML.',
+    module: 'Python Basics',
+    xpReward: 80,
+    worldId: 'world-1',
+    steps: [
+      {
+        id: 'pyb-story',
+        type: 'story',
+        title: 'Variables and Conditions',
+        content:
+          'Python is chosen for AI due to its readability and powerful math packages.\n\nBegin by learning to declare variables, run conditions (`if/else`), loop through sequences (`for/while`), and modularize your code using functions.',
+      },
+      {
+        id: 'pyb-code',
+        type: 'code',
+        title: 'Loops and Lists',
+        code: `# Declare list of weights
+weights = [0.1, 0.5, -0.2]
+learning_rate = 0.01
+
+# Update weights in a loop
+for i in range(len(weights)):
+    weights[i] = weights[i] - learning_rate * weights[i]
+
+print("Updated weights list:", weights)`,
+      },
+    ],
+  },
+  {
+    id: 'data-foundations',
+    title: 'Thinking in Datasets',
+    description: 'Learn train/validation/test splits, features vs labels, and deconstruct CSV and SQL structures.',
+    module: 'Data Preparation',
+    xpReward: 100,
+    worldId: 'world-2',
+    steps: [
+      {
+        id: 'datf-story',
+        type: 'story',
+        title: 'The Train/Test Split Rule',
+        content:
+          'Never test your model on the same data it trained on! That is like giving a student the exam questions before the test.\n\nAlways split your dataset into **Train** (to optimize weights) and **Test** (to validate real-world generalization).',
+      },
+    ],
+  },
+  {
+    id: 'linear-algebra',
+    title: 'Linear Algebra Superpowers',
+    description: 'Master scalars, vectors, matrices, dot products, and multi-dimensional projections visually.',
+    module: 'Mathematics Foundations',
+    xpReward: 150,
+    worldId: 'world-3',
+    steps: [
+      {
+        id: 'la-story',
+        type: 'story',
+        title: 'Dot Products and Weights',
+        content:
+          'In deep learning, neural layers perform matrix multiplications.\n\nThe core operation is the **Dot Product**: multiplying feature inputs by weight vectors and summing them. Master this operation to understand network feedforward sweeps.',
+      },
+    ],
+  },
+  {
+    id: 'cnn-vision',
+    title: 'Convolutional Grids & Filters',
+    description: 'Explore padding, pooling, and how local filters scan pixel matrices to detect object edges.',
+    module: 'Deep Learning',
+    xpReward: 180,
+    worldId: 'world-6',
+    isPremium: true,
+    steps: [
+      {
+        id: 'cnn-story',
+        type: 'story',
+        title: 'Kernel Slices',
+        content:
+          'Standard neural networks flatten images, losing spatial coordinate groupings. Convolutional neural networks (CNNs) preserve 2D grid dimensions by sliding filters over pixel segments to extract local features.',
+      },
+    ],
+  },
+  {
+    id: 'self-attention',
+    title: 'Self-Attention Mechanisms',
+    description: 'Calculate multi-head attention weights and watch token contextual references glow.',
+    module: 'Generative AI',
+    xpReward: 250,
+    worldId: 'world-7',
+    isPremium: true,
+    steps: [
+      {
+        id: 'att-story',
+        type: 'story',
+        title: 'Paying Attention to Context',
+        content:
+          'Self-attention maps context. In the sentence "The bank was muddy from the river bank", the model checks surrounding tokens to determine whether "bank" refers to a financial company or a river bank.',
+      },
+    ],
+  },
+  {
+    id: 'yolo-detection',
+    title: 'YOLO Object Localization',
+    description: 'Learn real-time object detection parameters and evaluate bounding box metrics.',
+    module: 'Object Detection',
+    xpReward: 200,
+    worldId: 'world-8',
+    isPremium: true,
+    steps: [
+      {
+        id: 'yolo-story',
+        type: 'story',
+        title: 'You Only Look Once',
+        content:
+          'Traditional detectors scan images repeatedly. YOLO (You Only Look Once) feeds the entire image through a single CNN forward pass to predict bounding boxes and class probabilities simultaneously.',
+      },
+    ],
+  },
+  {
+    id: 'docker-deployment',
+    title: 'Containerization & Docker',
+    description: 'Package your FastAPI endpoints, lock dependencies, and monitor drift parameters in production.',
+    module: 'Model Production',
+    xpReward: 200,
+    worldId: 'world-10',
+    isPremium: true,
+    steps: [
+      {
+        id: 'dock-story',
+        type: 'story',
+        title: 'Why Containerize?',
+        content:
+          'Local environments break. Docker locks OS packages, Python binaries, and dependency weights in a container so your FastAPI model runs identically on Vercel, AWS, or any remote machine.',
+      },
+    ],
+  },
+  {
+    id: 'ai-agents',
+    title: 'Autonomous Agents & Tool Calling',
+    description: 'Build agents equipped with memory, workflows, planning parameters, and tool execution loops.',
+    module: 'Generative AI',
+    xpReward: 300,
+    worldId: 'world-11',
+    isPremium: true,
+    steps: [
+      {
+        id: 'ag-story',
+        type: 'story',
+        title: 'Beyond Simple Prompts',
+        content:
+          'An agent is an LLM running in a loop with tools. Given a task, the agent plans steps, calls tools (like web search or calculators), monitors results, and loops until the goal is achieved.',
+      },
+    ],
+  },
+  {
+    id: 'rag-chatbot-portfolio',
+    title: 'Building a PDF RAG Assistant',
+    description: 'Develop an end-to-end question answering PDF search engine for your resume portfolio.',
+    module: 'Portfolio Builds',
+    xpReward: 400,
+    worldId: 'world-12',
+    isPremium: true,
+    steps: [
+      {
+        id: 'rc-story',
+        type: 'story',
+        title: 'Build and Deploy a RAG Assistant',
+        content:
+          'Upload PDF manuals, chunk them, store their embeddings in a local vector array, and construct prompt contexts for your LLM. Showcase it live as a full-stack portfolio piece!',
+      },
+    ],
+  },
 ]
 
 export function getLesson(id: string): Lesson | undefined {
