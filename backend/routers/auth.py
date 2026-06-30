@@ -8,7 +8,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from jose import jwt
-from passlib.context import CryptContext
+import bcrypt
+
 
 from database import get_db, User, Progress
 
@@ -18,7 +19,6 @@ JWT_SECRET = os.getenv("JWT_SECRET", "luminasupersecretkeytoken")
 JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440 # 24 hours
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class RegisterSchema(BaseModel):
     name: str
@@ -44,11 +44,20 @@ class ResetPasswordSchema(BaseModel):
 
 # Helper: Hash passwords
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    salt = bcrypt.gensalt()
+    pwd_bytes = password.encode('utf-8')
+    hashed = bcrypt.hashpw(pwd_bytes, salt)
+    return hashed.decode('utf-8')
 
 # Helper: Verify passwords
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        return bcrypt.checkpw(
+            plain_password.encode('utf-8'),
+            hashed_password.encode('utf-8')
+        )
+    except Exception:
+        return False
 
 # Helper: Create Access Token
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
