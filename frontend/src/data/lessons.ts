@@ -1740,6 +1740,502 @@ print("Reasoned Answer Output:", final_output)`,
       },
     ],
   },
+  {
+    id: 'ai-careers-ethics',
+    title: 'AI Careers & Ethics',
+    description: 'Understand narrow AI vs AGI, algorithmic bias, copyright concerns, and map your path as an AI Engineer.',
+    module: 'Foundations',
+    xpReward: 90,
+    worldId: 'world-0',
+    steps: [
+      {
+        id: 'eth-story',
+        type: 'story',
+        title: 'Ethics in the AI Age',
+        content:
+          'As AI systems grow in power, so do our responsibilities.\n\nFrom bias in datasets to privacy concerns, hallucinating text, and copyright disputes — building responsible AI is not optional. AI Engineers must understand how data limits translate to real-world failures.',
+      },
+      {
+        id: 'eth-math',
+        type: 'math',
+        title: 'Measuring Fairness (Demographic Parity)',
+        formula: 'P(ŷ = 1 | A = 0) = P(ŷ = 1 | A = 1)',
+        content: 'To verify if an algorithm (like credit approval) is fair across sensitive subgroups (like gender or ethnicity), we check for **Demographic Parity**.',
+        mathParts: [
+          { symbol: 'A = 0, A = 1', explanation: 'Sensitive attribute states (e.g., protected demographic subgroups).' },
+          { symbol: 'ŷ = 1', explanation: 'Positive model decision output (e.g., loan approved).' },
+          { symbol: 'P(ŷ = 1 | A)', explanation: 'Probability of receiving a positive prediction given the demographic attribute.' },
+        ],
+      },
+      {
+        id: 'eth-code',
+        type: 'code',
+        title: 'Calculating Demographic Parity',
+        code: `# Calculate algorithmic parity between two demographic groups
+import numpy as np
+
+# Approval outcomes (1: Approved, 0: Denied) for Group A and Group B
+group_A = np.array([1, 0, 1, 1, 0]) # 3 approvals out of 5
+group_B = np.array([0, 1, 0, 0, 1]) # 2 approvals out of 5
+
+prob_A = np.mean(group_A)
+prob_B = np.mean(group_B)
+
+parity_ratio = min(prob_A, prob_B) / max(prob_A, prob_B)
+print(f"Group A Approval Probability: {prob_A}")
+print(f"Group B Approval Probability: {prob_B}")
+print(f"Demographic Parity Ratio (target >= 0.8): {parity_ratio:.2f}")`,
+      },
+    ],
+  },
+  {
+    id: 'python-basics',
+    title: 'Python Syntax & Logic',
+    description: 'Learn variables, conditions, loops, functions, lists, and dicts — the core language of ML.',
+    module: 'Python Basics',
+    xpReward: 80,
+    worldId: 'world-1',
+    steps: [
+      {
+        id: 'pyb-story',
+        type: 'story',
+        title: 'Variables and Conditions',
+        content:
+          'Python is chosen for AI due to its readability and powerful math packages.\n\nBegin by learning to declare variables, run conditions (`if/else`), loop through sequences (`for/while`), and modularize your code using functions.',
+      },
+      {
+        id: 'pyb-math',
+        type: 'math',
+        title: 'Logical Activation Thresholds',
+        formula: 'f(x) = 1 if x >= θ else 0',
+        content: 'Computer logic runs on threshold states. In AI, a simple neuron evaluates feature outputs against a bias threshold state.',
+        mathParts: [
+          { symbol: 'x', explanation: 'Weighted feature input summation score.' },
+          { symbol: 'θ (theta)', explanation: 'Activation threshold value.' },
+          { symbol: 'f(x)', explanation: 'Binary decision output state (0 or 1).' },
+        ],
+      },
+      {
+        id: 'pyb-code',
+        type: 'code',
+        title: 'Loops and Lists',
+        code: `# Declare list of weights
+weights = [0.1, 0.5, -0.2]
+learning_rate = 0.01
+
+# Update weights in a loop
+for i in range(len(weights)):
+    weights[i] = weights[i] - learning_rate * weights[i]
+
+print("Updated weights list:", weights)`,
+      },
+    ],
+  },
+  {
+    id: 'data-foundations',
+    title: 'Thinking in Datasets',
+    description: 'Learn train/validation/test splits, features vs labels, and deconstruct CSV and SQL structures.',
+    module: 'Data Preparation',
+    xpReward: 100,
+    worldId: 'world-2',
+    steps: [
+      {
+        id: 'datf-story',
+        type: 'story',
+        title: 'The Train/Test Split Rule',
+        content:
+          'Never test your model on the same data it trained on! That is like giving a student the exam questions before the test.\n\nAlways split your dataset into **Train** (to optimize weights) and **Test** (to validate real-world generalization).',
+      },
+      {
+        id: 'datf-math',
+        type: 'math',
+        title: 'Model Validation Error',
+        formula: 'Validation Error = (1 / N) * Σ |y_actual - y_pred|',
+        content: 'To evaluate how well our training partitions represent the dataset, we calculate the validation error score across testing partitions.',
+        mathParts: [
+          { symbol: 'y_actual', explanation: 'The true ground-truth targets in the test split.' },
+          { symbol: 'y_pred', explanation: 'Model predictions evaluated on validation inputs.' },
+          { symbol: 'N', explanation: 'Total count of samples in the validation split.' },
+        ],
+      },
+      {
+        id: 'datf-code',
+        type: 'code',
+        title: 'Splitting Datasets in Python',
+        code: `# Split a dataset manually into Train (80%) and Test (20%) partitions
+import numpy as np
+
+# 10 data samples
+X = np.arange(10).reshape(10, 1)
+y = np.array([0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
+
+# Shuffle indices
+indices = np.arange(len(X))
+np.random.shuffle(indices)
+
+split_idx = int(0.8 * len(X))
+train_idx, test_idx = indices[:split_idx], indices[split_idx:]
+
+X_train, X_test = X[train_idx], X[test_idx]
+y_train, y_test = y[train_idx], y[test_idx]
+
+print("Train set indices:", train_idx)
+print("Test set indices:", test_idx)
+print("Dataset splits completed successfully!")`,
+      },
+    ],
+  },
+  {
+    id: 'linear-algebra',
+    title: 'Linear Algebra Superpowers',
+    description: 'Master scalars, vectors, matrices, dot products, and multi-dimensional projections visually.',
+    module: 'Mathematics Foundations',
+    xpReward: 150,
+    worldId: 'world-3',
+    steps: [
+      {
+        id: 'la-story',
+        type: 'story',
+        title: 'Dot Products and Weights',
+        content:
+          'In deep learning, neural layers perform matrix multiplications.\n\nThe core operation is the **Dot Product**: multiplying feature inputs by weight vectors and summing them. Master this operation to understand network feedforward sweeps.',
+      },
+      {
+        id: 'la-math',
+        type: 'math',
+        title: 'Matrix Multiplication',
+        formula: 'C_ij = Σ A_ik * B_kj',
+        content: 'When multiplying two matrices, the cell in row **i** and column **j** of the output is the dot product of row **i** from the first matrix and column **j** from the second.',
+        mathParts: [
+          { symbol: 'A', explanation: 'First matrix (dimensions M x K, represents input signals).' },
+          { symbol: 'B', explanation: 'Second matrix (dimensions K x N, represents weight arrays).' },
+          { symbol: 'C', explanation: 'Resulting output matrix (dimensions M x N).' },
+        ],
+      },
+      {
+        id: 'la-code',
+        type: 'code',
+        title: 'Matrix Operations in NumPy',
+        code: `# Perform matrix multiplication
+import numpy as np
+
+# Input signal matrix (2 samples, 3 features)
+A = np.array([[1, 2, 3], 
+              [4, 5, 6]])
+
+# Weights matrix (3 inputs, 2 output nodes)
+B = np.array([[0.1, 0.2], 
+              [0.3, 0.4], 
+              [0.5, 0.6]])
+
+C = np.dot(A, B)
+print("Output Matrix C:")
+print(C)
+print("Matrix dimensions resolved:", C.shape)`,
+      },
+    ],
+  },
+  {
+    id: 'cnn-vision',
+    title: 'Convolutional Grids & Filters',
+    description: 'Explore padding, pooling, and how local filters scan pixel matrices to detect object edges.',
+    module: 'Deep Learning',
+    xpReward: 180,
+    worldId: 'world-6',
+    isPremium: true,
+    steps: [
+      {
+        id: 'cnn-story',
+        type: 'story',
+        title: 'Kernel Slices',
+        content:
+          'Standard neural networks flatten images, losing spatial coordinate groupings. Convolutional neural networks (CNNs) preserve 2D grid dimensions by sliding filters over pixel segments to extract local features.',
+      },
+      {
+        id: 'cnn-math',
+        type: 'math',
+        title: 'Convolution Output Dimensions',
+        formula: 'O = [ (W − F + 2P) / S ] + 1',
+        content: 'To determine the spatial resolution width **O** of a layer after scanning with a filter, we calculate:',
+        mathParts: [
+          { symbol: 'W', explanation: 'Input image grid width (or height).' },
+          { symbol: 'F', explanation: 'Size of the convolutional filter/kernel.' },
+          { symbol: 'P', explanation: 'Padding size — border pixels added to avoid shrinking.' },
+          { symbol: 'S', explanation: 'Stride length — number of pixels the filter jumps at each step.' },
+        ],
+      },
+      {
+        id: 'cnn-code',
+        type: 'code',
+        title: 'Sliding Kernel Convolution in Python',
+        code: `# Perform a manual 2D convolution scan over a small grid
+import numpy as np
+
+# 4x4 input image grid
+W = np.array([
+    [10, 10, 0, 0],
+    [10, 10, 0, 0],
+    [10, 10, 0, 0],
+    [10, 10, 0, 0]
+])
+
+# 2x2 vertical edge detector kernel filter
+F = np.array([
+    [1, -1],
+    [1, -1]
+])
+
+# Output shape: (4 - 2 + 0)/1 + 1 = 3x3
+O = np.zeros((3, 3))
+
+# Sliding scan
+for r in range(3):
+    for c in range(3):
+        segment = W[r:r+2, c:c+2]
+        O[r, c] = np.sum(segment * F)
+
+print("Scanned Output Grid (Edge Highlighted):")
+print(O)`,
+      },
+    ],
+  },
+  {
+    id: 'yolo-detection',
+    title: 'YOLO Object Localization',
+    description: 'Learn real-time object detection parameters and evaluate bounding box metrics.',
+    module: 'Object Detection',
+    xpReward: 200,
+    worldId: 'world-8',
+    isPremium: true,
+    steps: [
+      {
+        id: 'yolo-story',
+        type: 'story',
+        title: 'You Only Look Once',
+        content:
+          'Traditional detectors scan images repeatedly. YOLO (You Only Look Once) feeds the entire image through a single CNN forward pass to predict bounding boxes and class probabilities simultaneously.',
+      },
+      {
+        id: 'yolo-math',
+        type: 'math',
+        title: 'Non-Maximum Suppression (NMS)',
+        formula: 'Overlap Score = Area of Intersection / Area of Union',
+        content: 'YOLO outputs multiple overlapping bounding box predictions for a single object. To keep only the best box, we remove boxes with high overlap IoU against the maximum score box.',
+        mathParts: [
+          { symbol: 'Intersection', explanation: 'Overlapping pixel area of two predicted boxes.' },
+          { symbol: 'Union', explanation: 'Total combined pixel area of the two boxes.' },
+          { symbol: 'NMS Threshold', explanation: 'If IoU > 0.5, the redundant box is suppressed.' },
+        ],
+      },
+      {
+        id: 'yolo-code',
+        type: 'code',
+        title: 'Calculating IoU Box Ratios',
+        code: `# Calculate Intersection over Union (IoU) overlap metrics
+def compute_iou(box1, box2):
+    # box format: [x1, y1, x2, y2]
+    x_left = max(box1[0], box2[0])
+    y_top = max(box1[1], box2[1])
+    x_right = min(box1[2], box2[2])
+    y_bottom = min(box1[3], box2[3])
+    
+    if x_right < x_left or y_bottom < y_top:
+        return 0.0
+        
+    intersection_area = (x_right - x_left) * (y_bottom - y_top)
+    
+    box1_area = (box1[2] - box1[0]) * (box1[3] - box1[1])
+    box2_area = (box2[2] - box2[0]) * (box2[3] - box2[1])
+    
+    union_area = box1_area + box2_area - intersection_area
+    return intersection_area / union_area
+
+b1 = [0, 0, 10, 10]
+b2 = [5, 5, 15, 15]
+print("Intersection over Union overlap score:", compute_iou(b1, b2))`,
+      },
+    ],
+  },
+  {
+    id: 'docker-deployment',
+    title: 'Containerization & Docker',
+    description: 'Package your FastAPI endpoints, lock dependencies, and monitor drift parameters in production.',
+    module: 'Model Production',
+    xpReward: 200,
+    worldId: 'world-10',
+    isPremium: true,
+    steps: [
+      {
+        id: 'dock-story',
+        type: 'story',
+        title: 'Why Containerize?',
+        content:
+          'Local environments break. Docker locks OS packages, Python binaries, and dependency weights in a container so your FastAPI model runs identically on Vercel, AWS, or any remote machine.',
+      },
+      {
+        id: 'dock-math',
+        type: 'math',
+        title: 'Service SLA Compliance Rate',
+        formula: 'SLA % = ( P_success / P_total ) * 100',
+        content: 'In production, models must process input streams quickly. We calculate the percentage of predictions resolved under response constraints.',
+        mathParts: [
+          { symbol: 'P_success', explanation: 'Total requests resolved successfully within response limits (e.g., < 100ms).' },
+          { symbol: 'P_total', explanation: 'Total incoming client queries.' },
+          { symbol: 'SLA Target', explanation: 'Production systems target >= 99.9% uptime compliance.' },
+        ],
+      },
+      {
+        id: 'dock-code',
+        type: 'code',
+        title: 'Writing a Dockerfile Configuration',
+        code: `# Sample Dockerfile configuration to package FastAPI
+# Use clean Python base image
+FROM python:3.10-slim
+
+# Set work directory
+WORKDIR /app
+
+# Copy dependency records
+COPY requirements.txt .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy backend files
+COPY . .
+
+# Expose web port
+EXPOSE 8000
+
+# Execute server
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]`,
+      },
+    ],
+  },
+  {
+    id: 'ai-agents',
+    title: 'Autonomous Agents & Tool Calling',
+    description: 'Build agents equipped with memory, workflows, planning parameters, and tool execution loops.',
+    module: 'Generative AI',
+    xpReward: 300,
+    worldId: 'world-11',
+    isPremium: true,
+    steps: [
+      {
+        id: 'ag-story',
+        type: 'story',
+        title: 'Beyond Simple Prompts',
+        content:
+          'An agent is an LLM running in a loop with tools. Given a task, the agent plans steps, calls tools (like web search or calculators), monitors results, and loops until the goal is achieved.',
+      },
+      {
+        id: 'ag-math',
+        type: 'math',
+        title: 'Tool Selection Probability',
+        formula: 'P(Tool | Context) = Softmax( Logits_tool )',
+        content: 'LLMs determine whether to stop reasoning or call a specific API tool by evaluating probability distribution scores over tool signature tokens.',
+        mathParts: [
+          { symbol: 'Logits_tool', explanation: 'Raw output scores predicted for tool schemas.' },
+          { symbol: 'Softmax', explanation: 'Transforms raw scores into probability arrays summing to 1.' },
+          { symbol: 'Context', explanation: 'User query plus past tool execution logs in history.' },
+        ],
+      },
+      {
+        id: 'ag-code',
+        type: 'code',
+        title: 'Implementing a Basic Tool Router Agent',
+        code: `# Basic agent routing logic
+def web_search(query):
+    return f"Results for: {query} (Found: 2026 updates)"
+
+def calculator(expr):
+    return str(eval(expr))
+
+# Simple mock agent routing function
+def run_agent_loop(query):
+    print(f"Analyzing task: '{query}'")
+    # Simulated model decision routing
+    if "search" in query:
+        action = "web_search"
+        arg = query.replace("search ", "")
+        result = web_search(arg)
+    elif "calculate" in query:
+        action = "calculator"
+        arg = query.replace("calculate ", "")
+        result = calculator(arg)
+    else:
+        result = "Done! Reached final answer."
+        
+    print(f"Decided to run tool: {action}")
+    print(f"Tool output: {result}")
+    return result
+
+run_agent_loop("calculate 500 * 24 - 100")`,
+      },
+    ],
+  },
+  {
+    id: 'rag-chatbot-portfolio',
+    title: 'Building a PDF RAG Assistant',
+    description: 'Develop an end-to-end question answering PDF search engine for your resume portfolio.',
+    module: 'Portfolio Builds',
+    xpReward: 400,
+    worldId: 'world-12',
+    isPremium: true,
+    steps: [
+      {
+        id: 'rc-story',
+        type: 'story',
+        title: 'Build and Deploy a RAG Assistant',
+        content:
+          'Upload PDF manuals, chunk them, store their embeddings in a local vector array, and construct prompt contexts for your LLM. Showcase it live as a full-stack portfolio piece!',
+      },
+      {
+        id: 'rc-math',
+        type: 'math',
+        title: 'Cosine Similarity Scoring',
+        formula: 'Cosine Score = (A · B) / (||A|| ||B||)',
+        content: 'To find the most relevant document chunks for a query, the vector database ranks embeddings by calculating the cosine of the angle between query vector **A** and chunk vector **B**.',
+        mathParts: [
+          { symbol: 'A · B', explanation: 'Dot product summation — measures alignment in coordinate direction.' },
+          { symbol: '||A||, ||B||', explanation: 'Vector magnitudes (lengths).' },
+          { symbol: 'Cosine Score', explanation: 'Score near 1.0 indicates close semantic similarity.' },
+        ],
+      },
+      {
+        id: 'rc-code',
+        type: 'code',
+        title: 'Building a Cosine Similarity RAG Lookup',
+        code: `# Build a vector similarity lookup mechanism
+import numpy as np
+
+# Query vector
+Q = np.array([0.8, 0.1, 0.5])
+
+# Database chunk vectors
+chunks = np.array([
+    [0.79, 0.12, 0.48], # Chunk 1 (highly relevant)
+    [0.10, 0.90, 0.15]  # Chunk 2 (irrelevant)
+])
+
+def query_vector_db(query, db_chunks):
+    scores = []
+    for chunk in db_chunks:
+        # Cosine similarity calculations
+        dot_product = np.dot(query, chunk)
+        norm_q = np.linalg.norm(query)
+        norm_chunk = np.linalg.norm(chunk)
+        score = dot_product / (norm_q * norm_chunk)
+        scores.append(score)
+    return np.argmax(scores), scores
+
+best_idx, all_scores = query_vector_db(Q, chunks)
+print("Calculated retrieval scores:", all_scores)
+print("Retrieved Chunk index:", best_idx)
+print("Successfully resolved context injection!")`,
+      },
+    ],
+  },
 ]
 
 export function getLesson(id: string): Lesson | undefined {
