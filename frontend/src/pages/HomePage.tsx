@@ -636,7 +636,7 @@ export function HomePage({
                     <div className="bg-white p-4 rounded-2xl inline-block shadow-lg mx-auto">
                       <img
                         src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=0-0-0&data=${encodeURIComponent(
-                          "upi://pay?pa=9a.anveshasingh@okaxis&pn=Anvesha%20Singh&am=799.00&cu=INR&tn=Lumina%20Premium"
+                          "upi://pay?pa=9236518010@axisbank&pn=Anvesha%20Singh&am=799.00&cu=INR&tn=Lumina%20Premium"
                         )}`}
                         alt="UPI Payment QR Code"
                         className="w-48 h-48 mx-auto"
@@ -645,7 +645,7 @@ export function HomePage({
                     <div className="space-y-2">
                       <span className="text-xs font-bold text-white block">Scan to Pay via any UPI App</span>
                       <div className="text-[11px] text-[#8b93a7] leading-relaxed">
-                        UPI ID: <span className="text-white font-mono font-bold select-all bg-[#0d0f14] px-2 py-1 rounded">9a.anveshasingh@okaxis</span>
+                        UPI ID: <span className="text-white font-mono font-bold select-all bg-[#0d0f14] px-2 py-1 rounded">9236518010@axisbank</span>
                       </div>
                       <p className="text-[10px] text-amber-500 max-w-xs mx-auto leading-relaxed">
                         Scan the code using Google Pay, PhonePe, Paytm, or BHIM. After confirming the payment, click the verification button below.
