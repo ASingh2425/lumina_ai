@@ -22,8 +22,11 @@ const DAILY_CHALLENGE = {
   explanation: 'Non-convex functions contain multiple valleys (local minima) and flat regions (saddle points). Simple gradient descent follows the local slope and can easily get trapped, failing to reach the global minimum.',
 }
 
+type CategoryType = 'foundations' | 'machine-learning' | 'deep-learning-genai' | 'bonus-content'
+
 export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePageProps) {
   const [activeWorldId, setActiveWorldId] = useState<string | null>(null)
+  const [activeCategory, setActiveCategory] = useState<CategoryType>('foundations')
   const [selectedOpt, setSelectedOpt] = useState<string | null>(null)
   const [challengeAnswered, setChallengeAnswered] = useState(false)
   const [challengeStatus, setChallengeStatus] = useState<'correct' | 'incorrect' | null>(null)
@@ -58,6 +61,9 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
   // Filter lessons belonging to the active world
   const worldLessons = lessons.filter((l) => l.worldId === activeWorldId)
   const worldModules = [...new Set(worldLessons.map((l) => l.module))]
+
+  // Filter worlds by active category
+  const filteredWorlds = WORLDS.filter((w) => w.category === activeCategory)
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
@@ -98,6 +104,29 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
           {!activeWorldId ? (
             /* --- WORLDS SELECTION PANEL --- */
             <div className="space-y-6">
+              
+              {/* Category Track Tabs */}
+              <div className="flex flex-wrap gap-2 border-b border-[var(--color-border)] pb-4">
+                {[
+                  { id: 'foundations', label: '1. Foundations' },
+                  { id: 'machine-learning', label: '2. Core ML' },
+                  { id: 'deep-learning-genai', label: '3. Deep Learning & GenAI' },
+                  { id: 'bonus-content', label: '🛡️ Premium Bonus' }
+                ].map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id as CategoryType)}
+                    className={`rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+                      activeCategory === cat.id
+                        ? 'bg-[var(--color-accent)] text-white shadow-lg'
+                        : 'border border-[var(--color-border)] text-[#8b93a7] hover:bg-[var(--color-surface-overlay)]'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
                   <span>🗺️</span> AI Worlds Map
@@ -106,7 +135,7 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {WORLDS.map((world) => {
+                {filteredWorlds.map((world) => {
                   const worldIdLessons = lessons.filter((l) => l.worldId === world.id)
                   const completedCount = worldIdLessons.filter((l) => isLessonComplete(l.id)).length
                   const progressPct = worldIdLessons.length > 0 ? (completedCount / worldIdLessons.length) * 100 : 0
@@ -122,7 +151,7 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
                           setActiveWorldId(world.id)
                         }
                       }}
-                      className={`relative overflow-hidden text-left rounded-3xl border p-6 bg-gradient-to-br ${world.color} transition-all duration-300 hover:scale-[1.02] flex flex-col justify-between min-h-[180px] shadow-lg`}
+                      className={`relative overflow-hidden text-left rounded-3xl border p-6 bg-gradient-to-br ${world.color} transition-all duration-300 hover:scale-[1.02] flex flex-col justify-between min-h-[190px] shadow-lg cursor-pointer`}
                     >
                       {/* Top Row: Icon and Title */}
                       <div>
