@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Lesson } from '../types/lesson'
+import { WORLDS } from '../types/world'
 
 interface HomePageProps {
   lessons: Lesson[]
@@ -22,13 +23,12 @@ const DAILY_CHALLENGE = {
 }
 
 export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePageProps) {
-  const modules = [...new Set(lessons.map((l) => l.module))]
-  
-  // Daily challenge states
+  const [activeWorldId, setActiveWorldId] = useState<string | null>(null)
   const [selectedOpt, setSelectedOpt] = useState<string | null>(null)
   const [challengeAnswered, setChallengeAnswered] = useState(false)
   const [challengeStatus, setChallengeStatus] = useState<'correct' | 'incorrect' | null>(null)
   const [lockedLesson, setLockedLesson] = useState<string | null>(null)
+  const [lockedWorld, setLockedWorld] = useState<string | null>(null)
 
   const isAdmin = (() => {
     try {
@@ -52,135 +52,205 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
     }
   }
 
-  // Calculate user module unlock state (e.g. unlocked if previous module has at least one completed lesson, or just unlocked sequential)
-  // Let's implement sequential unlocking for a premium gaming feel!
-  let previousModuleCompleted = true
+  // Find active world object
+  const activeWorld = WORLDS.find((w) => w.id === activeWorldId)
+  
+  // Filter lessons belonging to the active world
+  const worldLessons = lessons.filter((l) => l.worldId === activeWorldId)
+  const worldModules = [...new Set(worldLessons.map((l) => l.module))]
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
+    <div className="mx-auto max-w-5xl px-4 py-8">
       {/* Welcome & Overview Header */}
-      <section className="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border-b border-[var(--color-border)] pb-8">
+      <section className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border-b border-[var(--color-border)] pb-6">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">
+          <h1 className="text-3xl font-extrabold tracking-tight text-white">
             Learn AI by <span className="text-[var(--color-accent-bright)]">Understanding</span>
           </h1>
           <p className="mt-2 max-w-xl text-[#8b93a7] text-sm leading-relaxed">
-            Welcome to the Learning Forest. Play with algorithms, tweak parameters, tap mathematical formulations, and build from scratch.
+            Welcome to the AI Learning Forest. Travel through the worlds, practice in interactive labs, and deploy live portfolio models.
           </p>
         </div>
         
         {/* Statistics Cards */}
         <div className="flex gap-3 shrink-0">
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-5 py-3 text-center min-w-[100px]">
-            <span className="text-2xl">🌲</span>
-            <span className="text-xs font-semibold text-[#8b93a7] mt-1">Level</span>
-            <span className="text-lg font-bold text-white mt-0.5">Apprentice</span>
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-4 py-2 text-center min-w-[90px]">
+            <span className="text-xl">🌲</span>
+            <span className="text-[10px] font-semibold text-[#8b93a7] mt-1">Level</span>
+            <span className="text-sm font-bold text-white mt-0.5">Apprentice</span>
           </div>
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-5 py-3 text-center min-w-[100px]">
-            <span className="text-2xl">🎓</span>
-            <span className="text-xs font-semibold text-[#8b93a7] mt-1">Lessons</span>
-            <span className="text-lg font-bold text-white mt-0.5">
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-4 py-2 text-center min-w-[90px]">
+            <span className="text-xl">🎓</span>
+            <span className="text-[10px] font-semibold text-[#8b93a7] mt-1">Lessons</span>
+            <span className="text-sm font-bold text-white mt-0.5">
               {lessons.filter((l) => isLessonComplete(l.id)).length} / {lessons.length}
             </span>
           </div>
         </div>
       </section>
 
+      {/* Main Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left/Middle: Learning Path Skill Tree */}
-        <div className="lg:col-span-2 space-y-12 relative">
+        
+        {/* Left Side: Worlds Map OR Lessons list */}
+        <div className="lg:col-span-2 space-y-6">
           
-          {/* Vertical connecting line simulator */}
-          <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-[var(--color-accent)] to-[var(--color-border)] opacity-30 hidden sm:block" />
+          {!activeWorldId ? (
+            /* --- WORLDS SELECTION PANEL --- */
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+                  <span>🗺️</span> AI Worlds Map
+                </h2>
+                <span className="text-xs text-[#8b93a7]">Select a world to enter</span>
+              </div>
 
-          {modules.map((moduleName, modIdx) => {
-            const moduleLessons = lessons.filter((l) => l.module === moduleName)
-            const isModuleCompleted = moduleLessons.every((l) => isLessonComplete(l.id))
-            const isUnlocked = previousModuleCompleted
-            
-            // Set for next iteration
-            previousModuleCompleted = isModuleCompleted
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {WORLDS.map((world) => {
+                  const worldIdLessons = lessons.filter((l) => l.worldId === world.id)
+                  const completedCount = worldIdLessons.filter((l) => isLessonComplete(l.id)).length
+                  const progressPct = worldIdLessons.length > 0 ? (completedCount / worldIdLessons.length) * 100 : 0
+                  const isLocked = !!world.isPremium && !isAdmin
 
-            return (
-              <div key={moduleName} className={`relative flex gap-6 ${!isUnlocked ? 'opacity-50' : ''}`}>
-                {/* Node Milestone Icon on left */}
-                <div className="hidden sm:flex shrink-0 z-10">
-                  <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-full border-2 text-base font-bold shadow-lg transition-all duration-300 ${
-                      isModuleCompleted
-                        ? 'border-[var(--color-success)] bg-[var(--color-success)]/10 text-[var(--color-success)]'
-                        : isUnlocked
-                          ? 'border-[var(--color-accent)] bg-[var(--color-surface)] text-[var(--color-accent-bright)] ring-4 ring-[var(--color-accent)]/10'
-                          : 'border-[var(--color-border)] bg-[var(--color-surface-raised)] text-[#5b6378]'
-                    }`}
-                  >
-                    {isModuleCompleted ? '✓' : modIdx + 1}
-                  </div>
-                </div>
+                  return (
+                    <button
+                      key={world.id}
+                      onClick={() => {
+                        if (isLocked) {
+                          setLockedWorld(world.title)
+                        } else {
+                          setActiveWorldId(world.id)
+                        }
+                      }}
+                      className={`relative overflow-hidden text-left rounded-3xl border p-6 bg-gradient-to-br ${world.color} transition-all duration-300 hover:scale-[1.02] flex flex-col justify-between min-h-[180px] shadow-lg`}
+                    >
+                      {/* Top Row: Icon and Title */}
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-3xl">{world.icon}</span>
+                          {isLocked && (
+                            <span className="rounded-full bg-amber-500/20 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-bold text-amber-300 uppercase tracking-wider">
+                              Premium 🔒
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-extrabold text-base text-white">{world.title}</h3>
+                        <p className="text-xs font-semibold text-[#8b93a7] mt-0.5">{world.subtitle}</p>
+                      </div>
 
-                {/* Module block */}
-                <div className="flex-1">
-                  <div className="mb-4">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent-bright)]">
-                      Module {modIdx}
-                    </span>
-                    <h2 className="text-lg font-bold text-white mt-0.5">{moduleName}</h2>
-                  </div>
-
-                  <div className="space-y-4">
-                    {moduleLessons.map((lesson) => {
-                      const done = isLessonComplete(lesson.id)
-                      const isPremiumLocked = !!lesson.isPremium && !isAdmin
-
-                      return (
-                        <button
-                          key={lesson.id}
-                          type="button"
-                          disabled={!isUnlocked}
-                          onClick={() => {
-                            if (isPremiumLocked) {
-                              setLockedLesson(lesson.title)
-                            } else {
-                              onSelectLesson(lesson.id)
-                            }
-                          }}
-                          className="group flex w-full items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-surface-overlay)] disabled:pointer-events-none"
-                        >
-                          <div
-                            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${
-                              isPremiumLocked
-                                ? 'bg-amber-500/10 text-amber-400'
-                                : done
-                                  ? 'bg-[var(--color-success)]/20 text-[var(--color-success)]'
-                                  : 'bg-[var(--color-surface-overlay)] text-[#8b93a7] group-hover:bg-[var(--color-accent)]/20 group-hover:text-[var(--color-accent-bright)]'
-                            }`}
-                          >
-                            {isPremiumLocked ? '🔒' : done ? '✓' : '→'}
+                      {/* Bottom Row: Description & Progress */}
+                      <div className="mt-4 pt-3 border-t border-white/5">
+                        <p className="text-[11px] text-[#c4cad8] line-clamp-2 leading-relaxed mb-4">
+                          {world.description}
+                        </p>
+                        
+                        {worldIdLessons.length > 0 && (
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-[10px] font-semibold text-[#8b93a7]">
+                              <span>Progress</span>
+                              <span>{completedCount} / {worldIdLessons.length} Modules</span>
+                            </div>
+                            <div className="w-full h-1.5 bg-black/30 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-current rounded-full transition-all duration-500" 
+                                style={{ width: `${progressPct}%` }}
+                              />
+                            </div>
                           </div>
-                          
-                          <div className="min-w-0 flex-1">
-                            <h3 className="font-semibold text-sm group-hover:text-[var(--color-accent-bright)] flex items-center gap-2">
-                              {lesson.title}
-                              {lesson.isPremium && (
-                                <span className="rounded-md bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 text-[9px] font-bold text-amber-300 uppercase tracking-wider">
-                                  Premium
-                                </span>
-                              )}
-                            </h3>
-                            <p className="mt-1 text-xs text-[#8b93a7] line-clamp-2 leading-relaxed">{lesson.description}</p>
-                          </div>
-
-                          <div className="shrink-0 text-xs font-semibold text-[var(--color-warning)]">
-                            +{lesson.xpReward} XP
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </div>
+                        )}
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          ) : (
+            /* --- MODULES/LESSONS DRILL DOWN VIEW --- */
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setActiveWorldId(null)}
+                  className="rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface-overlay)] px-3 py-1.5 text-xs font-bold text-white transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  ← Back to Map
+                </button>
+                <div className="min-w-0">
+                  <h2 className="text-lg font-extrabold text-white truncate">{activeWorld?.title}</h2>
+                  <p className="text-xs text-[#8b93a7]">{activeWorld?.subtitle}</p>
                 </div>
               </div>
-            )
-          })}
+
+              {worldModules.length === 0 ? (
+                <div className="rounded-3xl border border-dashed border-[var(--color-border)] p-12 text-center text-sm text-[#8b93a7]">
+                  No lessons available in this world yet. We are building them!
+                </div>
+              ) : (
+                <div className="space-y-8">
+                  {worldModules.map((moduleName, modIdx) => {
+                    const moduleLessons = worldLessons.filter((l) => l.module === moduleName)
+
+                    return (
+                      <div key={moduleName} className="space-y-3">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--color-accent-bright)] pl-1">
+                          Module {modIdx + 1}: {moduleName}
+                        </h3>
+                        <div className="space-y-3">
+                          {moduleLessons.map((lesson) => {
+                            const done = isLessonComplete(lesson.id)
+                            const isPremiumLocked = !!lesson.isPremium && !isAdmin
+
+                            return (
+                              <button
+                                key={lesson.id}
+                                type="button"
+                                onClick={() => {
+                                  if (isPremiumLocked) {
+                                    setLockedLesson(lesson.title)
+                                  } else {
+                                    onSelectLesson(lesson.id)
+                                  }
+                                }}
+                                className="group flex w-full items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-surface-overlay)] cursor-pointer"
+                              >
+                                <div
+                                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${
+                                    isPremiumLocked
+                                      ? 'bg-amber-500/10 text-amber-400'
+                                      : done
+                                        ? 'bg-[var(--color-success)]/20 text-[var(--color-success)]'
+                                        : 'bg-[var(--color-surface-overlay)] text-[#8b93a7] group-hover:bg-[var(--color-accent)]/20 group-hover:text-[var(--color-accent-bright)]'
+                                  }`}
+                                >
+                                  {isPremiumLocked ? '🔒' : done ? '✓' : '→'}
+                                </div>
+                                
+                                <div className="min-w-0 flex-1">
+                                  <h3 className="font-semibold text-sm text-white group-hover:text-[var(--color-accent-bright)] flex items-center gap-2">
+                                    {lesson.title}
+                                    {lesson.isPremium && (
+                                      <span className="rounded-md bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 text-[9px] font-bold text-amber-300 uppercase tracking-wider">
+                                        Premium
+                                      </span>
+                                    )}
+                                  </h3>
+                                  <p className="mt-1 text-xs text-[#8b93a7] line-clamp-2 leading-relaxed">{lesson.description}</p>
+                                </div>
+
+                                <div className="shrink-0 text-xs font-semibold text-[var(--color-warning)]">
+                                  +{lesson.xpReward} XP
+                                </div>
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
         </div>
 
         {/* Right Sidebar: Daily Challenge & Achievements */}
@@ -205,7 +275,7 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
               {DAILY_CHALLENGE.options.map((opt) => {
                 const isSelected = selectedOpt === opt.id
                 const isCorrect = opt.id === DAILY_CHALLENGE.correctId
-                let classes = 'border-[var(--color-border)] hover:bg-[var(--color-surface-overlay)]'
+                let classes = 'border-[var(--color-border)] hover:bg-[var(--color-surface-overlay)] cursor-pointer text-white'
                 
                 if (challengeAnswered) {
                   if (isCorrect) {
@@ -213,7 +283,7 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
                   } else if (isSelected) {
                     classes = 'border-[var(--color-danger)] bg-[var(--color-danger)]/10 text-[#f87171]'
                   } else {
-                    classes = 'border-[var(--color-border)] opacity-60'
+                    classes = 'border-[var(--color-border)] opacity-60 text-gray-500'
                   }
                 }
 
@@ -232,29 +302,27 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
             </div>
 
             {challengeAnswered && (
-              <div className="mt-4 border-t border-[var(--color-border)] pt-3 text-xs leading-relaxed text-[#8b93a7]">
-                {challengeStatus === 'correct' ? (
-                  <span className="text-[var(--color-success)] font-semibold block mb-1">✓ Correct! Earned +50 XP</span>
-                ) : (
-                  <span className="text-[var(--color-danger)] font-semibold block mb-1">✕ Incorrect answer</span>
-                )}
+              <div className="mt-4 rounded-xl bg-[var(--color-surface-overlay)] p-3.5 border border-[var(--color-border)] text-[11px] leading-relaxed text-[#8b93a7]">
+                <strong className={challengeStatus === 'correct' ? 'text-[var(--color-success)]' : 'text-[var(--color-danger)]'}>
+                  {challengeStatus === 'correct' ? 'Correct Answer! ' : 'Incorrect. '}
+                </strong>
                 {DAILY_CHALLENGE.explanation}
               </div>
             )}
           </div>
 
-          {/* Gamified Achievements List */}
+          {/* Achievements Card */}
           <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-5">
-            <h3 className="font-bold text-sm text-white mb-4 flex items-center gap-2">
-              <span>🏆</span> Achievements
+            <h3 className="font-bold text-sm text-white border-b border-[var(--color-border)] pb-3 mb-4 flex items-center gap-2">
+              <span>🏆</span> Unlocked Badges
             </h3>
-            <div className="space-y-3.5">
+            <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 text-lg">
-                  ⚡
+                  🌱
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold">First Step</h4>
+                  <h4 className="text-xs font-bold text-white">First Step</h4>
                   <p className="text-[10px] text-[#8b93a7] mt-0.5">Complete your first interactive lesson.</p>
                 </div>
               </div>
@@ -263,7 +331,7 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
                   🔥
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold">Continuous Learner</h4>
+                  <h4 className="text-xs font-bold text-white">Continuous Learner</h4>
                   <p className="text-[10px] text-[#8b93a7] mt-0.5">Keep a learning streak active.</p>
                 </div>
               </div>
@@ -272,20 +340,23 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
                   🧠
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold">Concept Master</h4>
+                  <h4 className="text-xs font-bold text-white">Concept Master</h4>
                   <p className="text-[10px] text-[#8b93a7] mt-0.5">Complete all foundations with zero errors.</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
       </div>
+
+      {/* --- PREMIUM LOCKED LESSON MODAL --- */}
       {lockedLesson && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="w-full max-w-md rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-8 text-center shadow-2xl relative">
             <button 
               onClick={() => setLockedLesson(null)} 
-              className="absolute top-4 right-4 text-[#8b93a7] hover:text-white text-lg font-bold"
+              className="absolute top-4 right-4 text-[#8b93a7] hover:text-white text-lg font-bold cursor-pointer"
             >
               ✕
             </button>
@@ -297,15 +368,48 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
             <div className="space-y-3">
               <button 
                 onClick={() => alert("Monetization and subscriptions are launching soon! Administrators can access all modules now.")} 
-                className="w-full rounded-xl bg-amber-500 hover:bg-amber-400 py-3 text-xs font-bold text-black transition-all"
+                className="w-full rounded-xl bg-amber-500 hover:bg-amber-400 py-3 text-xs font-bold text-black transition-all cursor-pointer"
               >
                 Unlock Premium
               </button>
               <button 
                 onClick={() => setLockedLesson(null)} 
-                className="w-full rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface-overlay)] py-3 text-xs font-bold text-[#8b93a7] transition-all"
+                className="w-full rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface-overlay)] py-3 text-xs font-bold text-[#8b93a7] transition-all cursor-pointer"
               >
                 Keep Exploring Free Modules
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- PREMIUM LOCKED WORLD MODAL --- */}
+      {lockedWorld && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-8 text-center shadow-2xl relative">
+            <button 
+              onClick={() => setLockedWorld(null)} 
+              className="absolute top-4 right-4 text-[#8b93a7] hover:text-white text-lg font-bold cursor-pointer"
+            >
+              ✕
+            </button>
+            <span className="text-5xl block mb-4">🔒</span>
+            <h3 className="text-xl font-bold text-white mb-2">{lockedWorld}</h3>
+            <p className="text-xs text-[#8b93a7] leading-relaxed mb-6">
+              This entire curriculum world is reserved for premium subscribers. Upgrade to unlock all advanced models, interactive algorithm rooms, and automated Git repositories integration!
+            </p>
+            <div className="space-y-3">
+              <button 
+                onClick={() => alert("Premium options will launch soon. Admins can explore all worlds right now!")} 
+                className="w-full rounded-xl bg-amber-500 hover:bg-amber-400 py-3 text-xs font-bold text-black transition-all cursor-pointer"
+              >
+                Unlock Premium World
+              </button>
+              <button 
+                onClick={() => setLockedWorld(null)} 
+                className="w-full rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface-overlay)] py-3 text-xs font-bold text-[#8b93a7] transition-all cursor-pointer"
+              >
+                Close
               </button>
             </div>
           </div>

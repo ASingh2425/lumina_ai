@@ -7,6 +7,7 @@ export const lessons: Lesson[] = [
     description: 'Get a visual grip on variables, loops, functions, and the core indexing and slicing syntax of NumPy.',
     module: 'Python Basics',
     xpReward: 100,
+    worldId: 'world-1',
     steps: [
       {
         id: 'py-story',
@@ -62,10 +63,11 @@ print(dot_product)  # 1*4 + 2*5 + 3*6 = 32`,
   },
   {
     id: 'gradient-descent',
-    title: 'Gradient Descent',
-    description: 'Watch a ball roll downhill to find the lowest point — and learn why learning rate matters.',
-    module: 'Machine Learning Foundations',
+    title: 'Gradient Descent Intuition',
+    description: 'Walk down non-convex loss valleys, adjust learning rates, choose batch sizes, and visual model convergence.',
+    module: 'Optimization',
     xpReward: 150,
+    worldId: 'world-2',
     steps: [
       {
         id: 'gd-story',
@@ -180,9 +182,10 @@ for step in range(5):
   {
     id: 'linear-regression',
     title: 'Linear Regression',
-    description: 'Draw the best-fit line through data points and feel what "error" really means.',
-    module: 'Machine Learning Foundations',
+    description: 'Drag outliers, inject noise, adjust the slopes, and watch line fits update live with mean squared error metrics.',
+    module: 'Supervised Learning',
     xpReward: 120,
+    worldId: 'world-3',
     steps: [
       {
         id: 'lr-story',
@@ -265,10 +268,11 @@ print(f"Price = {m:.2f} * size + {b:.2f}")`,
   },
   {
     id: 'what-is-ml',
-    title: 'What is Machine Learning?',
-    description: 'Intelligence, AI, ML, and Deep Learning — demystified in 5 minutes.',
-    module: 'Introduction',
-    xpReward: 50,
+    title: 'What Actually is AI?',
+    description: 'Understand the timeline from rule-based filters to ML, explore narrow AI vs AGI, and separate myths from reality.',
+    module: 'Foundations',
+    xpReward: 80,
+    worldId: 'world-0',
     steps: [
       {
         id: 'ml-story',
@@ -306,9 +310,10 @@ print(f"Price = {m:.2f} * size + {b:.2f}")`,
   {
     id: 'k-means',
     title: 'K-Means Clustering',
-    description: 'Partition data points into clusters by dragging centroids and watching assignments update instantly.',
+    description: 'Find similar groups in unstructured datasets. Watch centroids update iteratively as points assign to coordinates.',
     module: 'Unsupervised Learning',
-    xpReward: 160,
+    xpReward: 140,
+    worldId: 'world-3',
     steps: [
       {
         id: 'km-story',
@@ -380,10 +385,11 @@ def fit_kmeans(X, K, max_iters=10):
   },
   {
     id: 'knn',
-    title: 'K-Nearest Neighbors',
-    description: 'Classify new data points by checking who their nearest neighbors are. Drag the query point and adjust K.',
-    module: 'Classification',
-    xpReward: 140,
+    title: 'K-Nearest Neighbors (KNN)',
+    description: 'Classify data based on proximity values. Tweak K neighbors, choose distance metrics, and see classification boundaries.',
+    module: 'Supervised Learning',
+    xpReward: 130,
+    worldId: 'world-3',
     steps: [
       {
         id: 'knn-story',
@@ -470,10 +476,11 @@ def predict_knn(X_train, y_train, x_query, k=3):
   },
   {
     id: 'decision-tree',
-    title: 'Decision Trees',
-    description: 'Grow a tree of decisions by splitting data along feature thresholds and watch overfitting happen.',
-    module: 'Classification',
-    xpReward: 160,
+    title: 'Decision Tree Splitting',
+    description: 'Inspect Entropy and Information Gain. Split nodes visually and traverse the tree to make predictions.',
+    module: 'Supervised Learning',
+    xpReward: 150,
+    worldId: 'world-3',
     steps: [
       {
         id: 'dt-story',
@@ -555,14 +562,23 @@ def find_best_split(X, y):
                 best_gain, best_split = gain, (feature, val)
     return best_split`,
       },
+      {
+        id: 'dt-simulator',
+        type: 'experiment',
+        title: 'Simulator: Netflix Recommendation',
+        content:
+          'Act as an AI recommendation engineer for Netflix. Tweak model parameters, select features, and deploy your algorithm to see simulated accuracy, server response latency, and subscriber churn live!',
+        widget: 'netflix-simulator',
+      },
     ],
   },
   {
     id: 'dbscan',
-    title: 'DBSCAN Clustering',
-    description: 'Discover density-based clusters and filter noise without needing to pre-specify K.',
+    title: 'DBSCAN Density Clustering',
+    description: 'Cluster density coordinates. Customize Epsilon and Min Points parameters to separate noise from patterns.',
     module: 'Unsupervised Learning',
     xpReward: 160,
+    worldId: 'world-3',
     steps: [
       {
         id: 'dbs-story',
@@ -632,6 +648,7 @@ def dbscan(X, eps, min_pts):
     module: 'Deep Learning',
     xpReward: 300,
     isPremium: true,
+    worldId: 'world-4',
     steps: [
       {
         id: 'nn-story',
@@ -793,6 +810,7 @@ def self_attention(Q, K, V):
     module: 'Generative AI',
     xpReward: 350,
     isPremium: true,
+    worldId: 'world-5',
     steps: [
       {
         id: 'rag-story',
@@ -865,6 +883,7 @@ def self_attention(Q, K, V):
     module: 'Generative AI',
     xpReward: 250,
     isPremium: true,
+    worldId: 'world-5',
     steps: [
       {
         id: 'tok-story',

@@ -18,6 +18,7 @@ import { PcaPlayground } from './playgrounds/PcaPlayground'
 import { RandomForestPlayground } from './playgrounds/RandomForestPlayground'
 import { InterviewPlayground } from './playgrounds/InterviewPlayground'
 import { ProjectPushPlayground } from './playgrounds/ProjectPushPlayground'
+import { NetflixSimulator } from './playgrounds/NetflixSimulator'
 
 function Widget({ type, step, sandbox }: { type: WidgetType; step: LessonStep; sandbox?: boolean }) {
   const topic = step.id.startsWith('gd-')
@@ -42,6 +43,7 @@ function Widget({ type, step, sandbox }: { type: WidgetType; step: LessonStep; s
   if (type === 'random-forest') return <RandomForestPlayground />
   if (type === 'interview-recruiter') return <InterviewPlayground topic={topic} />
   if (type === 'project-push') return <ProjectPushPlayground topic={topic} />
+  if (type === 'netflix-simulator') return <NetflixSimulator />
   return null
 }
 

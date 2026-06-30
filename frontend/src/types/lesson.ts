@@ -7,7 +7,7 @@ export type StepType =
   | 'quiz'
   | 'sandbox'
 
-export type WidgetType = 'gradient-descent' | 'linear-regression' | 'k-means' | 'knn' | 'numpy-slice' | 'decision-tree' | 'dbscan' | 'neural-network' | 'self-attention' | 'rag-pipeline' | 'tokenizer' | 'cnn' | 'pca' | 'random-forest' | 'interview-recruiter' | 'project-push' | 'none'
+export type WidgetType = 'gradient-descent' | 'linear-regression' | 'k-means' | 'knn' | 'numpy-slice' | 'decision-tree' | 'dbscan' | 'neural-network' | 'self-attention' | 'rag-pipeline' | 'tokenizer' | 'cnn' | 'pca' | 'random-forest' | 'interview-recruiter' | 'project-push' | 'netflix-simulator' | 'none'
 
 export interface InteractiveCodeLab {
   template: string
@@ -57,4 +57,5 @@ export interface Lesson {
   xpReward: number
   steps: LessonStep[]
   isPremium?: boolean
+  worldId?: string
 }
