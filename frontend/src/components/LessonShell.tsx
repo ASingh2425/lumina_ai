@@ -112,8 +112,9 @@ export function LessonShell({
       <div className="mt-6 flex justify-end">
         <button
           type="button"
+          disabled={ (step.type === 'quiz' || !!step.embeddedQuiz) && !isStepComplete(step.id) }
           onClick={handleContinue}
-          className="rounded-xl bg-[var(--color-accent)] px-8 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-[0.98]"
+          className="rounded-xl bg-[var(--color-accent)] px-8 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           {isLast ? 'Complete lesson ✓' : 'Continue →'}
         </button>

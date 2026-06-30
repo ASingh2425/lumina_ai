@@ -5,14 +5,7 @@ interface HeaderProps {
 }
 
 export function Header({ xp, streak, onHome }: HeaderProps) {
-  const isAdmin = (() => {
-    try {
-      const raw = localStorage.getItem('user')
-      return raw ? JSON.parse(raw).is_admin : false
-    } catch {
-      return false
-    }
-  })()
+
 
   const handleLogout = () => {
     localStorage.removeItem('token')
@@ -47,18 +40,7 @@ export function Header({ xp, streak, onHome }: HeaderProps) {
             <span className="text-[#8b93a7]">day</span>
           </div>
           
-          {isAdmin && (
-            <button
-              type="button"
-              onClick={() => {
-                window.history.pushState(null, '', '/admin')
-                window.dispatchEvent(new Event('popstate'))
-              }}
-              className="rounded-xl bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500 hover:text-black hover:border-transparent transition-all"
-            >
-              Admin Portal
-            </button>
-          )}
+
 
           <button
             type="button"

@@ -30,6 +30,9 @@ export interface LessonStep {
   interactiveCode?: InteractiveCodeLab
   formula?: string
   mathParts?: MathPart[]
+  embeddedQuiz?: QuizQuestion
+  realWorldContext?: string
+  adaptiveFeedback?: string
 }
 
 export interface QuizQuestion {
@@ -47,6 +50,11 @@ export interface QuizOption {
 export interface MathPart {
   symbol: string
   explanation: string
+}
+
+export interface FlashcardData {
+  front: string
+  back: string
 }
 
 export interface Lesson {

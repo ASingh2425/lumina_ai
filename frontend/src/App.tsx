@@ -6,6 +6,8 @@ import { lessons, getLesson } from './data/lessons'
 import { useProgress } from './hooks/useProgress'
 import { AuthPages } from './pages/AuthPages'
 import { AdminPortal } from './pages/AdminPortal'
+import { WorldCompleteModal } from './components/WorldCompleteModal'
+import { AssessmentView } from './components/AssessmentView'
 
 function App() {
   const [activeLessonId, setActiveLessonId] = useState<string | null>(() => localStorage.getItem('activeLessonId'))
@@ -14,6 +16,10 @@ function App() {
     const raw = localStorage.getItem('stepIndex')
     return raw ? parseInt(raw, 10) : 0
   })
+  
+  const [completedWorldId, setCompletedWorldId] = useState<string | null>(null)
+  const [takingAssessmentFor, setTakingAssessmentFor] = useState<string | null>(null)
+
   const { progress, completeStep, completeLesson, isStepComplete, isLessonComplete } = useProgress()
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
 
@@ -67,6 +73,21 @@ function App() {
     window.dispatchEvent(new Event('popstate'))
   }
 
+  const handleCompleteLesson = () => {
+    if (!activeLesson) return
+    completeLesson(activeLesson.id, activeLesson.xpReward)
+    
+    // Check if this was the last lesson in the world
+    const worldLessons = lessons.filter(l => l.worldId === activeLesson.worldId)
+    const currentIndex = worldLessons.findIndex(l => l.id === activeLesson.id)
+    
+    if (currentIndex === worldLessons.length - 1) {
+      setCompletedWorldId(activeLesson.worldId ?? null)
+    } else {
+      goHome()
+    }
+  }
+
   const selectLesson = (id: string) => {
     setActiveLessonId(id)
     setStepIndex(0)
@@ -76,13 +97,32 @@ function App() {
     <div className="min-h-screen bg-[var(--color-surface)]">
       <Header xp={progress.xp} streak={progress.streak} onHome={goHome} />
 
+      {takingAssessmentFor && (
+        <AssessmentView 
+          worldId={takingAssessmentFor} 
+          onClose={() => setTakingAssessmentFor(null)}
+          onComplete={(score, total) => {
+             alert(`You scored ${score} out of ${total}!`)
+             setTakingAssessmentFor(null)
+          }}
+        />
+      )}
+
+      {completedWorldId && (
+        <WorldCompleteModal 
+          worldId={completedWorldId} 
+          onClose={() => { setCompletedWorldId(null); goHome(); }} 
+          onTakeAssessment={() => { setTakingAssessmentFor(completedWorldId as string); setCompletedWorldId(null); goHome(); }}
+        />
+      )}
+
       {activeLesson ? (
         <LessonShell
           lesson={activeLesson}
           currentStepIndex={stepIndex}
           onStepChange={setStepIndex}
           onCompleteStep={(stepId, xp) => completeStep(activeLesson.id, stepId, xp)}
-          onCompleteLesson={() => completeLesson(activeLesson.id, activeLesson.xpReward)}
+          onCompleteLesson={handleCompleteLesson}
           onBack={goHome}
           isStepComplete={(stepId) => isStepComplete(activeLesson.id, stepId)}
         />

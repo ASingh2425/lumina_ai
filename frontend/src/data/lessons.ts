@@ -1,4 +1,4 @@
-import type { Lesson } from '../types/lesson'
+import type { Lesson, FlashcardData } from '../types/lesson'
 
 export const lessons: Lesson[] = [
   {
@@ -15,6 +15,18 @@ export const lessons: Lesson[] = [
         title: 'Why NumPy?',
         content:
           'Python is the language of AI, but native Python lists can be slow when processing millions of data points.\n\nThat\'s why scientists built **NumPy** (Numerical Python). It provides fast, multidimensional arrays and math functions that run in compiled C code underneath.\n\nBefore training a neural network, you must learn to load, index, and slice arrays.',
+        realWorldContext: 'In real-world computer vision, an image is just a massive 3D NumPy array (Height x Width x RGB Channels). You cannot use standard Python lists to process 4K video frames in real-time; you must use vectorized NumPy operations!',
+        embeddedQuiz: {
+          prompt: 'Why do AI engineers prefer NumPy over standard Python lists for data processing?',
+          options: [
+            { id: 'a', label: 'Because NumPy is written entirely in Python, making it easier to read.' },
+            { id: 'b', label: 'Because NumPy uses underlying C code and vectorized operations for massive speed boosts.' },
+            { id: 'c', label: 'Because NumPy lists can store different data types like strings and integers together.' }
+          ],
+          correctId: 'b',
+          explanation: 'Exactly! Under the hood, NumPy arrays are contiguous blocks of memory processed using highly optimized C code, making math operations exponentially faster than native Python lists.'
+        },
+        adaptiveFeedback: 'Remember, the main bottleneck in AI is speed. Python is a slow, interpreted language. NumPy solves this by delegating the heavy math to fast, compiled C code.'
       },
       {
         id: 'py-visual',
@@ -60,6 +72,40 @@ dot_product = np.dot(a, b)
 print(dot_product)  # 1*4 + 2*5 + 3*6 = 32`,
       },
     ],
+  },
+  {
+    id: 'world-1-capstone',
+    title: 'World 1 Capstone: Mini Data Pipeline',
+    description: 'Build a small data processing pipeline using NumPy to prove you have mastered the basics.',
+    module: 'Python Basics',
+    xpReward: 300,
+    worldId: 'world-1',
+    steps: [
+      {
+        id: 'capstone-intro',
+        type: 'story',
+        title: 'Your First Mission',
+        content: 'You are now an AI Data Engineer. Your task is to process a batch of noisy sensor readings using NumPy. You will need to filter out negative values and compute the mean of the remaining valid readings.',
+        realWorldContext: 'In IoT systems, sensors often send garbage data (like negative values for light intensity). Cleaning this data is step 1 before feeding it to any AI model.',
+        embeddedQuiz: {
+           prompt: 'Which NumPy operation would you use to find all elements in an array `arr` that are greater than 0?',
+           options: [
+             { id: 'a', label: 'arr[arr > 0]' },
+             { id: 'b', label: 'arr.filter(> 0)' },
+             { id: 'c', label: 'np.find_greater(arr, 0)' }
+           ],
+           correctId: 'a',
+           explanation: 'Yes! Boolean indexing `arr[arr > 0]` is the most efficient, pythonic way to filter NumPy arrays.'
+        },
+        adaptiveFeedback: 'NumPy does not use typical array methods like .filter(). It uses a special syntax called boolean indexing where you pass a condition directly into the brackets.'
+      },
+      {
+        id: 'capstone-code',
+        type: 'code',
+        title: 'Code the Pipeline',
+        code: `import numpy as np\n\nsensor_data = np.array([12.5, -3.2, 8.1, 15.0, -99.9, 10.2])\n\n# 1. Filter out all values less than 0\nvalid_data = sensor_data[sensor_data >= 0]\n\n# 2. Compute the mean of the valid data\nmean_val = np.mean(valid_data)\n\nprint("Valid readings:", valid_data)\nprint("Mean value:", mean_val)`
+      }
+    ]
   },
   {
     id: 'gradient-descent',
@@ -2717,3 +2763,35 @@ print("Noise Injected:", np.round(noise_injected, 2))`,
 export function getLesson(id: string): Lesson | undefined {
   return lessons.find((l) => l.id === id)
 }
+
+const worldFlashcards: Record<string, FlashcardData[]> = {
+  'world-1': [
+    { front: 'What is a Tensor?', back: 'A multi-dimensional array. A scalar is 0D, a vector is 1D, a matrix is 2D, and a tensor generalizes this to N dimensions.' },
+    { front: 'Why use NumPy instead of Python Lists?', back: 'NumPy uses contiguous memory and vectorized C code, making it exponentially faster for mathematical operations over large datasets.' },
+    { front: 'What does reshape(-1, 1) do in NumPy?', back: 'It dynamically calculates the number of rows needed (the -1) to ensure the array becomes a 2D matrix with exactly 1 column.' }
+  ]
+}
+
+const worldAssessments: Record<string, { prompt: string, options: {id: string, label: string}[], correctId: string, explanation: string }[]> = {
+  'world-1': [
+    {
+      prompt: 'Scenario: You are building an image preprocessing pipeline. You load a 1920x1080 RGB image. You want to extract only the Red channel. Which NumPy slicing operation accomplishes this?',
+      options: [
+        { id: 'a', label: 'image[:, :, 0]' },
+        { id: 'b', label: 'image[0, :, :]' },
+        { id: 'c', label: 'image[1920, 1080, 0]' }
+      ],
+      correctId: 'a',
+      explanation: 'Correct! "image[:, :, 0]" selects all rows, all columns, but only the 0th index of the 3rd dimension (which corresponds to the Red channel in RGB).'
+    }
+  ]
+}
+
+export function getFlashcardsForWorld(worldId: string): FlashcardData[] {
+  return worldFlashcards[worldId] || []
+}
+
+export function getAssessmentForWorld(worldId: string) {
+  return worldAssessments[worldId] || []
+}
+
