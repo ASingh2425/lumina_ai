@@ -2,6 +2,71 @@ import type { Lesson, FlashcardData } from '../types/lesson'
 
 export const lessons: Lesson[] = [
   {
+    id: 'python-basics',
+    title: 'Python Syntax & Logic',
+    description: 'Learn variables, conditions, loops, functions, lists, and dicts — the core language of ML.',
+    module: 'Python Basics',
+    xpReward: 80,
+    worldId: 'world-1',
+    steps: [
+      {
+        id: 'pyb-story',
+        type: 'story',
+        title: 'Variables and Conditions',
+        content: 'Python is chosen for AI due to its readability and powerful math packages.\n\nBegin by learning to declare variables, run conditions (`if/else`), loop through sequences (`for/while`), and modularize your code using functions.',
+        realWorldContext: 'In real-world AI, Python serves as the glue. You use it to load datasets, handle API requests, and orchestrate the heavy lifting done by C++ libraries underneath.',
+        embeddedQuiz: {
+           prompt: 'Why is Python the dominant language in AI despite being slower than C++?',
+           options: [
+             { id: 'a', label: 'It is actually faster than C++.' },
+             { id: 'b', label: 'It acts as an easy-to-use interface for highly optimized C++ libraries like NumPy and PyTorch.' },
+             { id: 'c', label: 'It is the only language that supports matrices.' }
+           ],
+           correctId: 'b',
+           explanation: 'Python gives you rapid prototyping and readability, while delegating the intense math to compiled C/C++ code under the hood.'
+        },
+        adaptiveFeedback: 'Think about division of labor. Python handles the easy orchestration, while lower-level languages handle the heavy math.'
+      },
+      {
+        id: 'pyb-visual',
+        type: 'visual',
+        title: 'Code Builder: Logical Thresholds',
+        content: 'Fill in the blanks to build a python logic block that prints predictions when values cross threshold levels.',
+        widget: 'project-push',
+        realWorldContext: 'Thresholding is the basis of activation functions in Neural Networks. If a neuron\'s output is above a certain threshold, it fires.',
+        embeddedQuiz: {
+           prompt: 'If you want a program to execute code ONLY if a value is above 5, which control structure do you use?',
+           options: [
+             { id: 'a', label: 'for loop' },
+             { id: 'b', label: 'while loop' },
+             { id: 'c', label: 'if statement' }
+           ],
+           correctId: 'c',
+           explanation: 'An `if` statement evaluates a boolean condition and executes the block only if it is true.'
+        }
+      },
+      {
+        id: 'pyb-math',
+        type: 'math',
+        title: 'Logical Activation Thresholds',
+        formula: 'f(x) = 1 \\text{ if } x \\geq \\theta \\text{ else } 0',
+        content: 'Computer logic runs on threshold states. In AI, a simple neuron evaluates feature outputs against a bias threshold state.',
+        mathParts: [
+          { symbol: 'x', explanation: 'Weighted feature input summation score.' },
+          { symbol: '\\theta (theta)', explanation: 'Activation threshold value.' },
+          { symbol: 'f(x)', explanation: 'Binary decision output state (0 or 1).' },
+        ],
+        realWorldContext: 'This exact math represents the "Step Function", the earliest activation function used in the perceptron in the 1950s!'
+      },
+      {
+        id: 'pyb-code',
+        type: 'code',
+        title: 'Loops and Lists',
+        code: `# Declare list of weights\nweights = [0.1, 0.5, -0.2]\nlearning_rate = 0.01\n\n# Update weights in a loop\nfor i in range(len(weights)):\n    weights[i] = weights[i] - learning_rate * weights[i]\n\nprint("Updated weights list:", weights)`
+      }
+    ]
+  },
+  {
     id: 'python-numpy',
     title: 'Python & NumPy Basics',
     description: 'Get a visual grip on variables, loops, functions, and the core indexing and slicing syntax of NumPy.',
@@ -13,9 +78,8 @@ export const lessons: Lesson[] = [
         id: 'py-story',
         type: 'story',
         title: 'Why NumPy?',
-        content:
-          'Python is the language of AI, but native Python lists can be slow when processing millions of data points.\n\nThat\'s why scientists built **NumPy** (Numerical Python). It provides fast, multidimensional arrays and math functions that run in compiled C code underneath.\n\nBefore training a neural network, you must learn to load, index, and slice arrays.',
-        realWorldContext: 'In real-world computer vision, an image is just a massive 3D NumPy array (Height x Width x RGB Channels). You cannot use standard Python lists to process 4K video frames in real-time; you must use vectorized NumPy operations!',
+        content: 'Python is the language of AI, but native Python lists can be slow when processing millions of data points.\n\nThat\'s why scientists built **NumPy** (Numerical Python). It provides fast, multidimensional arrays and math functions that run in compiled C code underneath.\n\nBefore training a neural network, you must learn to load, index, and slice arrays.',
+        realWorldContext: 'In real-world computer vision, an image is just a massive 3D NumPy array (Height x Width x RGB Channels). You cannot use standard Python lists to process 4K video frames in real-time.',
         embeddedQuiz: {
           prompt: 'Why do AI engineers prefer NumPy over standard Python lists for data processing?',
           options: [
@@ -24,7 +88,7 @@ export const lessons: Lesson[] = [
             { id: 'c', label: 'Because NumPy lists can store different data types like strings and integers together.' }
           ],
           correctId: 'b',
-          explanation: 'Exactly! Under the hood, NumPy arrays are contiguous blocks of memory processed using highly optimized C code, making math operations exponentially faster than native Python lists.'
+          explanation: 'Exactly! Under the hood, NumPy arrays are contiguous blocks of memory processed using highly optimized C code.'
         },
         adaptiveFeedback: 'Remember, the main bottleneck in AI is speed. Python is a slow, interpreted language. NumPy solves this by delegating the heavy math to fast, compiled C code.'
       },
@@ -32,9 +96,19 @@ export const lessons: Lesson[] = [
         id: 'py-visual',
         type: 'visual',
         title: 'Dynamic Slicing',
-        content:
-          'This is a 1D NumPy array with 8 items. Adjust the **Start**, **Stop**, and **Step** sliders below to see which elements are selected and watch the slicing syntax update live.',
+        content: 'This is a 1D NumPy array with 8 items. Adjust the **Start**, **Stop**, and **Step** sliders below to see which elements are selected and watch the slicing syntax update live.',
         widget: 'numpy-slice',
+        realWorldContext: 'Cropping an image in Photoshop or an AI pipeline is fundamentally just NumPy slicing operations behind the scenes! image[y1:y2, x1:x2]',
+        embeddedQuiz: {
+           prompt: 'If you want to reverse a 1D NumPy array `arr`, which slicing syntax do you use?',
+           options: [
+             { id: 'a', label: 'arr[::-1]' },
+             { id: 'b', label: 'arr[reverse]' },
+             { id: 'c', label: 'arr[0:-1]' }
+           ],
+           correctId: 'a',
+           explanation: 'A step size of -1 iterates through the array backwards. This is a very common Python/NumPy idiom.'
+        }
       },
       {
         id: 'py-quiz',
@@ -49,29 +123,16 @@ export const lessons: Lesson[] = [
             { id: 'd', label: '[30, 40]' },
           ],
           correctId: 'a',
-          explanation:
-            'Python indexing is 0-based, and stop indices are exclusive. Index 1 is 20, and index 4 (50) is excluded, so we get elements at indices 1, 2, and 3: [20, 30, 40].',
-        },
+          explanation: 'Python indexing is 0-based, and stop indices are exclusive. Index 1 is 20, and index 4 (50) is excluded, so we get elements at indices 1, 2, and 3: [20, 30, 40].',
+        }
       },
       {
         id: 'py-code',
         type: 'code',
         title: 'Basic Vector Operations',
-        code: `import numpy as np
-
-# Create arrays
-a = np.array([1, 2, 3])
-b = np.array([4, 5, 6])
-
-# Element-wise operations (super fast!)
-print(a + b)  # [5, 7, 9]
-print(a * 2)  # [2, 4, 6]
-
-# Dot product (multiplying elements and summing)
-dot_product = np.dot(a, b)
-print(dot_product)  # 1*4 + 2*5 + 3*6 = 32`,
-      },
-    ],
+        code: `import numpy as np\n\n# Create arrays\na = np.array([1, 2, 3])\nb = np.array([4, 5, 6])\n\n# Element-wise operations (super fast!)\nprint(a + b)  # [5, 7, 9]\nprint(a * 2)  # [2, 4, 6]\n\n# Dot product (multiplying elements and summing)\ndot_product = np.dot(a, b)\nprint(dot_product)  # 1*4 + 2*5 + 3*6 = 32`
+      }
+    ]
   },
   {
     id: 'world-1-capstone',
@@ -1513,37 +1574,6 @@ print("Context-enriched output:", output)`,
     ],
   },
   {
-    id: 'python-basics',
-    title: 'Python Syntax & Logic',
-    description: 'Learn variables, conditions, loops, functions, lists, and dicts — the core language of ML.',
-    module: 'Python Basics',
-    xpReward: 80,
-    worldId: 'world-1',
-    steps: [
-      {
-        id: 'pyb-story',
-        type: 'story',
-        title: 'Variables and Conditions',
-        content:
-          'Python is chosen for AI due to its readability and powerful math packages.\n\nBegin by learning to declare variables, run conditions (`if/else`), loop through sequences (`for/while`), and modularize your code using functions.',
-      },
-      {
-        id: 'pyb-code',
-        type: 'code',
-        title: 'Loops and Lists',
-        code: `# Declare list of weights
-weights = [0.1, 0.5, -0.2]
-learning_rate = 0.01
-
-# Update weights in a loop
-for i in range(len(weights)):
-    weights[i] = weights[i] - learning_rate * weights[i]
-
-print("Updated weights list:", weights)`,
-      },
-    ],
-  },
-  {
     id: 'data-foundations',
     title: 'Thinking in Datasets',
     description: 'Learn train/validation/test splits, features vs labels, and deconstruct CSV and SQL structures.',
@@ -1839,57 +1869,6 @@ parity_ratio = min(prob_A, prob_B) / max(prob_A, prob_B)
 print(f"Group A Approval Probability: {prob_A}")
 print(f"Group B Approval Probability: {prob_B}")
 print(f"Demographic Parity Ratio (target >= 0.8): {parity_ratio:.2f}")`,
-      },
-    ],
-  },
-  {
-    id: 'python-basics',
-    title: 'Python Syntax & Logic',
-    description: 'Learn variables, conditions, loops, functions, lists, and dicts — the core language of ML.',
-    module: 'Python Basics',
-    xpReward: 80,
-    worldId: 'world-1',
-    steps: [
-      {
-        id: 'pyb-story',
-        type: 'story',
-        title: 'Variables and Conditions',
-        content:
-          'Python is chosen for AI due to its readability and powerful math packages.\n\nBegin by learning to declare variables, run conditions (`if/else`), loop through sequences (`for/while`), and modularize your code using functions.',
-      },
-      {
-        id: 'pyb-visual',
-        type: 'visual',
-        title: 'Code Builder: Logical Thresholds',
-        content:
-          'Fill in the blanks to build a python logic block that prints predictions when values cross threshold levels.',
-        widget: 'project-push',
-      },
-      {
-        id: 'pyb-math',
-        type: 'math',
-        title: 'Logical Activation Thresholds',
-        formula: 'f(x) = 1 if x >= θ else 0',
-        content: 'Computer logic runs on threshold states. In AI, a simple neuron evaluates feature outputs against a bias threshold state.',
-        mathParts: [
-          { symbol: 'x', explanation: 'Weighted feature input summation score.' },
-          { symbol: 'θ (theta)', explanation: 'Activation threshold value.' },
-          { symbol: 'f(x)', explanation: 'Binary decision output state (0 or 1).' },
-        ],
-      },
-      {
-        id: 'pyb-code',
-        type: 'code',
-        title: 'Loops and Lists',
-        code: `# Declare list of weights
-weights = [0.1, 0.5, -0.2]
-learning_rate = 0.01
-
-# Update weights in a loop
-for i in range(len(weights)):
-    weights[i] = weights[i] - learning_rate * weights[i]
-
-print("Updated weights list:", weights)`,
       },
     ],
   },
