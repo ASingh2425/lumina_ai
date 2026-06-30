@@ -66,7 +66,7 @@ def call_gemini(question: str, level: str, context: str, api_key: str) -> str:
         },
         "generationConfig": {
             "temperature": 0.7,
-            "maxOutputTokens": 400
+            "maxOutputTokens": 2048
         }
     }
     
