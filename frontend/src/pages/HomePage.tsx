@@ -636,7 +636,7 @@ export function HomePage({
                     <div className="bg-white p-4 rounded-2xl inline-block shadow-lg mx-auto">
                       <img
                         src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=0-0-0&data=${encodeURIComponent(
-                          "upi://pay?pa=9236518010@axisbank&pn=Anvesha%20Singh&am=799.00&cu=INR&tn=Lumina%20Premium"
+                          "upi://pay?pa=9236518010@axisbank&pn=Anvesha%20Singh&am=99.00&cu=INR&tn=Lumina%20Premium"
                         )}`}
                         alt="UPI Payment QR Code"
                         className="w-48 h-48 mx-auto"
@@ -659,7 +659,7 @@ export function HomePage({
                   <div>
                     <span className="text-[10px] text-[#8b93a7] block font-semibold uppercase">Total Charge</span>
                     <span className="text-lg font-black text-white">
-                      {paymentMethod === 'card' ? '$9.99' : '₹799'}{' '}
+                      {paymentMethod === 'card' ? '$9.99' : '₹99'}{' '}
                       <span className="text-[10px] text-[#8b93a7] font-normal">/mo</span>
                     </span>
                   </div>
