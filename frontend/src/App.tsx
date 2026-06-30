@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Header } from './components/Header'
 import { LessonShell } from './components/LessonShell'
 import { HomePage } from './pages/HomePage'
@@ -11,10 +11,19 @@ function App() {
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null)
   const [stepIndex, setStepIndex] = useState(0)
   const { progress, completeStep, completeLesson, isStepComplete, isLessonComplete } = useProgress()
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname)
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
 
   // Routing checks
   const isAuthenticated = !!localStorage.getItem('token')
-  const isAddressAdmin = window.location.pathname === '/admin'
+  const isAddressAdmin = currentPath === '/admin'
 
   if (!isAuthenticated) {
     return <AuthPages />
@@ -29,6 +38,8 @@ function App() {
   const goHome = () => {
     setActiveLessonId(null)
     setStepIndex(0)
+    window.history.pushState(null, '', '/')
+    window.dispatchEvent(new Event('popstate'))
   }
 
   const selectLesson = (id: string) => {

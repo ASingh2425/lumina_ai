@@ -50,7 +50,10 @@ export function Header({ xp, streak, onHome }: HeaderProps) {
           {isAdmin && (
             <button
               type="button"
-              onClick={() => window.location.href = '/admin'}
+              onClick={() => {
+                window.history.pushState(null, '', '/admin')
+                window.dispatchEvent(new Event('popstate'))
+              }}
               className="rounded-xl bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500 hover:text-black hover:border-transparent transition-all"
             >
               Admin Portal

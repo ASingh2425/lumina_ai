@@ -1,4 +1,8 @@
 import os
+import sys
+# Add backend to path for local execution
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "backend"))
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
