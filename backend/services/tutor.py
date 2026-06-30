@@ -50,28 +50,67 @@ FALLBACK = {
     ),
 }
 
-def ask_tutor(question: str, level: str, context: str) -> str:
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        fallback_desc = FALLBACK.get(level, FALLBACK["beginner"])
-        return (
-            f"[OFFLINE MOCK RESPONSE] To get real AI answers, please configure your "
-            f"`OPENAI_API_KEY` in `backend/.env`.\n\n"
-            f"Regarding your question: \"{question}\"\n\n"
-            f"Here is a concept review ({level}):\n{fallback_desc}"
-        )
+import requests
 
-    client = OpenAI(api_key=api_key)
+def call_gemini(question: str, level: str, context: str, api_key: str) -> str:
     system = LEVEL_PROMPTS.get(level, LEVEL_PROMPTS["beginner"])
     user_msg = f"Context: {context}\n\nQuestion: {question}"
+    
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    payload = {
+        "contents": [{
+            "parts": [{"text": user_msg}]
+        }],
+        "systemInstruction": {
+            "parts": [{"text": system}]
+        },
+        "generationConfig": {
+            "temperature": 0.7,
+            "maxOutputTokens": 400
+        }
+    }
+    
+    try:
+        response = requests.post(url, json=payload, headers={"Content-Type": "application/json"})
+        response.raise_for_status()
+        data = response.json()
+        return data["candidates"][0]["content"]["parts"][0]["text"]
+    except Exception as e:
+        return f"[GEMINI API ERROR: {str(e)}]\n\nFallback concept review:\n{FALLBACK.get(level, FALLBACK['beginner'])}"
 
-    response = client.chat.completions.create(
-        model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user_msg},
-        ],
-        max_tokens=400,
-        temperature=0.7,
+def ask_tutor(question: str, level: str, context: str) -> str:
+    # 1. Try Gemini API if key is present (Free Tier Option)
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    if gemini_key:
+        return call_gemini(question, level, context, gemini_key)
+
+    # 2. Try OpenAI API if key is present
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if openai_key:
+        try:
+            client = OpenAI(api_key=openai_key)
+            system = LEVEL_PROMPTS.get(level, LEVEL_PROMPTS["beginner"])
+            user_msg = f"Context: {context}\n\nQuestion: {question}"
+
+            response = client.chat.completions.create(
+                model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user_msg},
+                ],
+                max_tokens=400,
+                temperature=0.7,
+            )
+            return response.choices[0].message.content or FALLBACK[level]
+        except Exception as e:
+            return f"[OPENAI API ERROR: {str(e)}]\n\nFallback concept review:\n{FALLBACK.get(level, FALLBACK['beginner'])}"
+
+    # 3. Offline Mock Fallback
+    fallback_desc = FALLBACK.get(level, FALLBACK["beginner"])
+    return (
+        f"[OFFLINE MOCK RESPONSE] Configure `GEMINI_API_KEY` (Free) or `OPENAI_API_KEY` "
+        f"in `backend/.env` to get live AI answers.\n\n"
+        f"Regarding your question: \"{question}\"\n\n"
+        f"Here is a concept review ({level}):\n{fallback_desc}"
     )
-    return response.choices[0].message.content or FALLBACK[level]
+
