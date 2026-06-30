@@ -39,6 +39,13 @@ export function HomePage({
   const [challengeStatus, setChallengeStatus] = useState<'correct' | 'incorrect' | null>(null)
   const [lockedLesson, setLockedLesson] = useState<string | null>(null)
   const [lockedWorld, setLockedWorld] = useState<string | null>(null)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [cardNumber, setCardNumber] = useState('')
+  const [cardName, setCardName] = useState('')
+  const [cardExpiry, setCardExpiry] = useState('')
+  const [cardCvc, setCardCvc] = useState('')
+  const [paymentSuccess, setPaymentSuccess] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const isAdmin = (() => {
     try {
@@ -403,7 +410,10 @@ export function HomePage({
             </p>
             <div className="space-y-3">
               <button 
-                onClick={() => alert("Monetization and subscriptions are launching soon! Administrators can access all modules now.")} 
+                onClick={() => {
+                  setLockedLesson(null)
+                  setShowPaymentModal(true)
+                }}
                 className="w-full rounded-xl bg-amber-500 hover:bg-amber-400 py-3 text-xs font-bold text-black transition-all cursor-pointer"
               >
                 Unlock Premium
@@ -436,7 +446,10 @@ export function HomePage({
             </p>
             <div className="space-y-3">
               <button 
-                onClick={() => alert("Premium options will launch soon. Admins can explore all worlds right now!")} 
+                onClick={() => {
+                  setLockedWorld(null)
+                  setShowPaymentModal(true)
+                }}
                 className="w-full rounded-xl bg-amber-500 hover:bg-amber-400 py-3 text-xs font-bold text-black transition-all cursor-pointer"
               >
                 Unlock Premium World
@@ -448,6 +461,190 @@ export function HomePage({
                 Close
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- STRIPE-STYLE CREDIT CARD PAYMENT MODAL --- */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="w-full max-w-md rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-6 md:p-8 shadow-2xl relative space-y-6">
+            <button 
+              onClick={() => {
+                if (!isProcessing) {
+                  setShowPaymentModal(false)
+                  setPaymentSuccess(false)
+                }
+              }} 
+              className="absolute top-4 right-4 text-[#8b93a7] hover:text-white text-lg font-bold cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <div className="text-center">
+              <h3 className="text-xl font-extrabold text-white">Unlock Premium Membership</h3>
+              <p className="text-xs text-[#8b93a7] mt-1">Get immediate access to all worlds, labs, and code sandboxes.</p>
+            </div>
+
+            {paymentSuccess ? (
+              <div className="py-8 text-center space-y-4 animate-fade-in">
+                <span className="text-6xl block animate-bounce">🎉</span>
+                <h4 className="text-lg font-bold text-emerald-400">Payment Successful!</h4>
+                <p className="text-xs text-[#8b93a7] max-w-xs mx-auto leading-relaxed">
+                  Welcome to Lumina Premium! Your account has been promoted. All advanced worlds and labs are now fully unlocked.
+                </p>
+                <button
+                  onClick={() => {
+                    setShowPaymentModal(false)
+                    setPaymentSuccess(false)
+                    window.location.reload() // Reload to instantly sync all dashboard locks!
+                  }}
+                  className="rounded-xl bg-emerald-500 hover:bg-emerald-400 px-6 py-2.5 text-xs font-bold text-black transition-all cursor-pointer"
+                >
+                  Start Exploring
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Visual Credit Card Mockup */}
+                <div className="w-full aspect-[1.586/1] rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-500 p-6 flex flex-col justify-between shadow-xl relative text-white font-mono overflow-hidden">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-8 -mt-8" />
+                  
+                  {/* Top card row */}
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-white/60 tracking-widest uppercase">Premium Member</span>
+                      <div className="w-8 h-6 bg-amber-400/80 rounded-md border border-amber-500/20" /> {/* Chip */}
+                    </div>
+                    <span className="text-lg font-bold italic tracking-tight">Lumina</span>
+                  </div>
+
+                  {/* Card number row */}
+                  <div className="text-base md:text-lg tracking-[0.2em] font-medium my-4 min-h-[24px]">
+                    {cardNumber || '•••• •••• •••• ••••'}
+                  </div>
+
+                  {/* Bottom card row */}
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <span className="text-[7px] text-white/5 tracking-wider block">CARDHOLDER</span>
+                      <span className="text-[10px] font-bold tracking-wide uppercase min-h-[15px] block">
+                        {cardName || 'YOUR NAME'}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[7px] text-white/5 tracking-wider block">EXPIRES</span>
+                      <span className="text-[10px] font-bold tracking-wide min-h-[15px] block">
+                        {cardExpiry || 'MM/YY'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card input forms */}
+                <div className="space-y-4 text-left">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-[#8b93a7] uppercase tracking-wider">Cardholder Name</label>
+                    <input
+                      type="text"
+                      placeholder="Jane Doe"
+                      value={cardName}
+                      onChange={(e) => setCardName(e.target.value)}
+                      disabled={isProcessing}
+                      className="w-full rounded-xl border border-[var(--color-border)] bg-[#0d0f14] p-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-[#8b93a7] uppercase tracking-wider">Card Number</label>
+                    <input
+                      type="text"
+                      placeholder="4111 1111 1111 1111"
+                      value={cardNumber}
+                      maxLength={19}
+                      onChange={(e) => {
+                        // Format card numbers with spaces
+                        const val = e.target.value.replace(/\s?/g, '').replace(/(\d{4})/g, '$1 ').trim()
+                        setCardNumber(val)
+                      }}
+                      disabled={isProcessing}
+                      className="w-full rounded-xl border border-[var(--color-border)] bg-[#0d0f14] p-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-[#8b93a7] uppercase tracking-wider">Expires</label>
+                      <input
+                        type="text"
+                        placeholder="MM/YY"
+                        value={cardExpiry}
+                        maxLength={5}
+                        onChange={(e) => {
+                          let val = e.target.value
+                          if (val.length === 2 && !val.includes('/')) {
+                            val += '/'
+                          }
+                          setCardExpiry(val)
+                        }}
+                        disabled={isProcessing}
+                        className="w-full rounded-xl border border-[var(--color-border)] bg-[#0d0f14] p-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-[#8b93a7] uppercase tracking-wider">CVC Code</label>
+                      <input
+                        type="password"
+                        placeholder="***"
+                        value={cardCvc}
+                        maxLength={3}
+                        onChange={(e) => setCardCvc(e.target.value)}
+                        disabled={isProcessing}
+                        className="w-full rounded-xl border border-[var(--color-border)] bg-[#0d0f14] p-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Call-to-action details */}
+                <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-4">
+                  <div>
+                    <span className="text-[10px] text-[#8b93a7] block font-semibold uppercase">Total Charge</span>
+                    <span className="text-lg font-black text-white">$9.99 <span className="text-[10px] text-[#8b93a7] font-normal">/mo</span></span>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      if (!cardNumber || !cardName || !cardExpiry || !cardCvc) {
+                        alert("Please fill out all card details to unlock Premium.")
+                        return
+                      }
+                      setIsProcessing(true)
+                      
+                      // Simulate card authorization delay
+                      setTimeout(() => {
+                        try {
+                          const rawUser = localStorage.getItem('user')
+                          if (rawUser) {
+                            const parsed = JSON.parse(rawUser)
+                            parsed.is_admin = true // Promote to Premium Admin instantly
+                            localStorage.setItem('user', JSON.stringify(parsed))
+                          }
+                          setPaymentSuccess(true)
+                        } catch (err) {
+                          alert("Failed to update user profile claims.")
+                        } finally {
+                          setIsProcessing(false)
+                        }
+                      }, 1800)
+                    }}
+                    disabled={isProcessing}
+                    className="rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 px-6 py-3 text-xs font-extrabold text-black transition-all cursor-pointer"
+                  >
+                    {isProcessing ? 'Processing...' : 'Pay $9.99 🚀'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
