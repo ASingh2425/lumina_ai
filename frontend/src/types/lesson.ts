@@ -56,4 +56,5 @@ export interface Lesson {
   module: string
   xpReward: number
   steps: LessonStep[]
+  isPremium?: boolean
 }

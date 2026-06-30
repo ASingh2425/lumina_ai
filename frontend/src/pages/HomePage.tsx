@@ -28,6 +28,18 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
   const [selectedOpt, setSelectedOpt] = useState<string | null>(null)
   const [challengeAnswered, setChallengeAnswered] = useState(false)
   const [challengeStatus, setChallengeStatus] = useState<'correct' | 'incorrect' | null>(null)
+  const [lockedLesson, setLockedLesson] = useState<string | null>(null)
+
+  const isAdmin = (() => {
+    try {
+      const raw = localStorage.getItem('user')
+      if (!raw) return false
+      const parsed = JSON.parse(raw)
+      return !!parsed.is_admin
+    } catch {
+      return false
+    }
+  })()
 
   const handleAnswerChallenge = (optId: string) => {
     if (challengeAnswered) return
@@ -118,27 +130,42 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
                   <div className="space-y-4">
                     {moduleLessons.map((lesson) => {
                       const done = isLessonComplete(lesson.id)
+                      const isPremiumLocked = !!lesson.isPremium && !isAdmin
+
                       return (
                         <button
                           key={lesson.id}
                           type="button"
                           disabled={!isUnlocked}
-                          onClick={() => onSelectLesson(lesson.id)}
+                          onClick={() => {
+                            if (isPremiumLocked) {
+                              setLockedLesson(lesson.title)
+                            } else {
+                              onSelectLesson(lesson.id)
+                            }
+                          }}
                           className="group flex w-full items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-surface-overlay)] disabled:pointer-events-none"
                         >
                           <div
                             className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${
-                              done
-                                ? 'bg-[var(--color-success)]/20 text-[var(--color-success)]'
-                                : 'bg-[var(--color-surface-overlay)] text-[#8b93a7] group-hover:bg-[var(--color-accent)]/20 group-hover:text-[var(--color-accent-bright)]'
+                              isPremiumLocked
+                                ? 'bg-amber-500/10 text-amber-400'
+                                : done
+                                  ? 'bg-[var(--color-success)]/20 text-[var(--color-success)]'
+                                  : 'bg-[var(--color-surface-overlay)] text-[#8b93a7] group-hover:bg-[var(--color-accent)]/20 group-hover:text-[var(--color-accent-bright)]'
                             }`}
                           >
-                            {done ? '✓' : '→'}
+                            {isPremiumLocked ? '🔒' : done ? '✓' : '→'}
                           </div>
                           
                           <div className="min-w-0 flex-1">
-                            <h3 className="font-semibold text-sm group-hover:text-[var(--color-accent-bright)]">
+                            <h3 className="font-semibold text-sm group-hover:text-[var(--color-accent-bright)] flex items-center gap-2">
                               {lesson.title}
+                              {lesson.isPremium && (
+                                <span className="rounded-md bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 text-[9px] font-bold text-amber-300 uppercase tracking-wider">
+                                  Premium
+                                </span>
+                              )}
                             </h3>
                             <p className="mt-1 text-xs text-[#8b93a7] line-clamp-2 leading-relaxed">{lesson.description}</p>
                           </div>
@@ -253,6 +280,37 @@ export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePage
           </div>
         </div>
       </div>
+      {lockedLesson && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-8 text-center shadow-2xl relative">
+            <button 
+              onClick={() => setLockedLesson(null)} 
+              className="absolute top-4 right-4 text-[#8b93a7] hover:text-white text-lg font-bold"
+            >
+              ✕
+            </button>
+            <span className="text-5xl block mb-4">🔒</span>
+            <h3 className="text-xl font-bold text-white mb-2">{lockedLesson}</h3>
+            <p className="text-xs text-[#8b93a7] leading-relaxed mb-6">
+              This advanced portfolio project is reserved for premium subscribers. It unlocks visual modeling sandboxes, direct interview recruiter mock runs, and automatic Git push configurations!
+            </p>
+            <div className="space-y-3">
+              <button 
+                onClick={() => alert("Monetization and subscriptions are launching soon! Administrators can access all modules now.")} 
+                className="w-full rounded-xl bg-amber-500 hover:bg-amber-400 py-3 text-xs font-bold text-black transition-all"
+              >
+                Unlock Premium
+              </button>
+              <button 
+                onClick={() => setLockedLesson(null)} 
+                className="w-full rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface-overlay)] py-3 text-xs font-bold text-[#8b93a7] transition-all"
+              >
+                Keep Exploring Free Modules
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

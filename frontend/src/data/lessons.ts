@@ -627,10 +627,11 @@ def dbscan(X, eps, min_pts):
   },
   {
     id: 'neural-network',
-    title: 'Neural Networks',
-    description: 'Adjust weights and biases to separate non-linear data and see what a single neuron can classify.',
+    title: 'Deep Neural Networks',
+    description: 'Learn backpropagation, hidden layers, activation functions (ReLU, Sigmoid), and build a digit classifier.',
     module: 'Deep Learning',
-    xpReward: 180,
+    xpReward: 300,
+    isPremium: true,
     steps: [
       {
         id: 'nn-story',
@@ -787,10 +788,11 @@ def self_attention(Q, K, V):
   },
   {
     id: 'rag-pipeline',
-    title: 'Retrieval-Augmented Gen (RAG)',
-    description: 'Give your LLM an open-book library. Control document retrieval scores and inspect prompt context builds.',
+    title: 'Retrieval-Augmented Generation (RAG)',
+    description: 'Connect vector databases with LLMs to build AI that answers questions based on custom PDF knowledge documents.',
     module: 'Generative AI',
-    xpReward: 180,
+    xpReward: 350,
+    isPremium: true,
     steps: [
       {
         id: 'rag-story',
@@ -858,10 +860,11 @@ def self_attention(Q, K, V):
   },
   {
     id: 'tokenizer',
-    title: 'Byte-Pair Tokenization',
-    description: 'See how LLMs split words into colored subword byte pieces, allowing them to read and process new vocabulary.',
+    title: 'LLM Tokenizers & Byte Pair Encoding',
+    description: 'Explore Byte Pair Encoding (BPE), train a custom subword tokenizer on text data, and inspect tokens visually.',
     module: 'Generative AI',
-    xpReward: 160,
+    xpReward: 250,
+    isPremium: true,
     steps: [
       {
         id: 'tok-story',
