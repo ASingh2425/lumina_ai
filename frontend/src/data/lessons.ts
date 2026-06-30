@@ -1639,6 +1639,107 @@ print("Updated weights list:", weights)`,
       },
     ],
   },
+  {
+    id: 'kaggle-titanic-comp',
+    title: 'Competition: Titanic Survival Predictor',
+    description: 'Optimize feature scaling parameters, fill missing metrics, and submit your score to top the validation boards.',
+    module: 'Guided Competitions',
+    xpReward: 300,
+    worldId: 'bonus-competitions',
+    isPremium: true,
+    steps: [
+      {
+        id: 'comp-story',
+        type: 'story',
+        title: 'Entering the Arena',
+        content:
+          'Kaggle-style challenges test your practical data pipeline engineering skills.\n\nYour task is to analyze passenger demographic features (age, ticket class, siblings count) and construct a pipeline that predicts survival rate. Optimize your validation loss and upload your submission vector!',
+      },
+      {
+        id: 'comp-code',
+        type: 'code',
+        title: 'Titanic Pipeline submission script',
+        code: `# Guided Competition submission helper
+import numpy as np
+
+# Load mock test sample features (Class, Age, Fare)
+test_features = np.array([
+    [3, 22.0, 7.25],   # Passenger 1
+    [1, 38.0, 71.28],  # Passenger 2
+    [3, 26.0, 7.925]   # Passenger 3
+])
+
+# Threshold logic pipeline weights
+weights = np.array([-1.5, -0.05, 0.02])
+bias = 0.5
+
+def predict_survival(X):
+    # Dot product projection
+    raw_scores = np.dot(X, weights) + bias
+    probabilities = 1 / (1 + np.exp(-raw_scores))
+    predictions = (probabilities > 0.5).astype(int)
+    return predictions
+
+submission = predict_survival(test_features)
+print("Submission survival predictions (0: Deceased, 1: Survived):")
+print(submission)
+print("Pipeline verified. Output ready for validation scoring upload!")`,
+      },
+    ],
+  },
+  {
+    id: 'reasoning-models',
+    title: 'Reasoning Models & Inference Scaling',
+    description: 'Learn how modern models perform multi-path search steps, verification checks, and scale compute at inference time.',
+    module: 'Research Lab',
+    xpReward: 350,
+    worldId: 'bonus-research',
+    isPremium: true,
+    steps: [
+      {
+        id: 'res-story',
+        type: 'story',
+        title: 'Scaling Compute at Inference',
+        content:
+          'Standard transformers predict the next token instantly using fixed compute parameters. Modern **Reasoning Models** scale compute at inference time instead.\n\nThey run search loops, generate internal "thought paths," evaluate intermediate steps, and correct their own errors before outputting a final answer. This mimics how humans think before they speak.',
+      },
+      {
+        id: 'res-code',
+        type: 'code',
+        title: 'Simulated Tree-of-Thought Search Loop',
+        code: `# Tree-of-Thought reasoning loop simulator
+import time
+
+def generate_thoughts(state):
+    return [state + " -> Try A", state + " -> Try B"]
+
+def evaluate_thought(thought):
+    # Simulated validation check
+    if "Try B" in thought:
+        return 0.95 # Highly promising path
+    return 0.20
+
+def run_reasoning_search(start_state):
+    print("Initiating thinking sequence...")
+    thoughts = generate_thoughts(start_state)
+    best_score = 0
+    best_thought = ""
+    
+    for t in thoughts:
+        score = evaluate_thought(t)
+        print(f"Path evaluated: '{t}' | Score: {score}")
+        if score > best_score:
+            best_score = score
+            best_thought = t
+            
+    print("Self-Correction: Selected optimal path.")
+    return best_thought
+
+final_output = run_reasoning_search("Target Math Problem")
+print("Reasoned Answer Output:", final_output)`,
+      },
+    ],
+  },
 ]
 
 export function getLesson(id: string): Lesson | undefined {
