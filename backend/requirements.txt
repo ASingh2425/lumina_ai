@@ -5,6 +5,7 @@ python-dotenv>=1.0.0
 openai>=1.55.0
 sqlalchemy
 passlib[bcrypt]
-pyjwt
+python-jose[cryptography]
 python-multipart
 psycopg2-binary
+
