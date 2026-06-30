@@ -8,8 +8,12 @@ import { AuthPages } from './pages/AuthPages'
 import { AdminPortal } from './pages/AdminPortal'
 
 function App() {
-  const [activeLessonId, setActiveLessonId] = useState<string | null>(null)
-  const [stepIndex, setStepIndex] = useState(0)
+  const [activeLessonId, setActiveLessonId] = useState<string | null>(() => localStorage.getItem('activeLessonId'))
+  const [activeWorldId, setActiveWorldId] = useState<string | null>(() => localStorage.getItem('activeWorldId'))
+  const [stepIndex, setStepIndex] = useState<number>(() => {
+    const raw = localStorage.getItem('stepIndex')
+    return raw ? parseInt(raw, 10) : 0
+  })
   const { progress, completeStep, completeLesson, isStepComplete, isLessonComplete } = useProgress()
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
 
@@ -20,6 +24,26 @@ function App() {
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
+
+  useEffect(() => {
+    if (activeLessonId) {
+      localStorage.setItem('activeLessonId', activeLessonId)
+    } else {
+      localStorage.removeItem('activeLessonId')
+    }
+  }, [activeLessonId])
+
+  useEffect(() => {
+    if (activeWorldId) {
+      localStorage.setItem('activeWorldId', activeWorldId)
+    } else {
+      localStorage.removeItem('activeWorldId')
+    }
+  }, [activeWorldId])
+
+  useEffect(() => {
+    localStorage.setItem('stepIndex', stepIndex.toString())
+  }, [stepIndex])
 
   // Routing checks
   const isAuthenticated = !!localStorage.getItem('token')
@@ -37,6 +61,7 @@ function App() {
 
   const goHome = () => {
     setActiveLessonId(null)
+    setActiveWorldId(null)
     setStepIndex(0)
     window.history.pushState(null, '', '/')
     window.dispatchEvent(new Event('popstate'))
@@ -66,6 +91,8 @@ function App() {
           lessons={lessons}
           onSelectLesson={selectLesson}
           isLessonComplete={isLessonComplete}
+          activeWorldId={activeWorldId}
+          setActiveWorldId={setActiveWorldId}
         />
       )}
     </div>

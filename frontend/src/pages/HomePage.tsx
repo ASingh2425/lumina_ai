@@ -6,6 +6,8 @@ interface HomePageProps {
   lessons: Lesson[]
   onSelectLesson: (id: string) => void
   isLessonComplete: (id: string) => boolean
+  activeWorldId: string | null
+  setActiveWorldId: (id: string | null) => void
 }
 
 // Daily Challenge dataset
@@ -24,8 +26,13 @@ const DAILY_CHALLENGE = {
 
 type CategoryType = 'foundations' | 'machine-learning' | 'deep-learning-genai' | 'bonus-content'
 
-export function HomePage({ lessons, onSelectLesson, isLessonComplete }: HomePageProps) {
-  const [activeWorldId, setActiveWorldId] = useState<string | null>(null)
+export function HomePage({ 
+  lessons, 
+  onSelectLesson, 
+  isLessonComplete,
+  activeWorldId,
+  setActiveWorldId
+}: HomePageProps) {
   const [activeCategory, setActiveCategory] = useState<CategoryType>('foundations')
   const [selectedOpt, setSelectedOpt] = useState<string | null>(null)
   const [challengeAnswered, setChallengeAnswered] = useState(false)
