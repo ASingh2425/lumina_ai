@@ -286,8 +286,19 @@ export function AuthPages() {
         {mode === 'verify' && (
           <form onSubmit={handleVerify} className="space-y-4">
             <p className="text-xs text-[#8b93a7] text-center leading-relaxed">
-              We generated a security code for <strong>{email || 'your email'}</strong>. Enter it below to unlock access.
+              Please enter your registered email address and the 6-digit security code.
             </p>
+            <div>
+              <label className="text-[10px] text-[#8b93a7] font-semibold block mb-1 uppercase tracking-wider">Email Address</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your-email@example.com"
+                className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-xs outline-none focus:border-[var(--color-accent)] text-white"
+              />
+            </div>
             <div>
               <label className="text-[10px] text-[#8b93a7] font-semibold block mb-1 uppercase tracking-wider">Verification OTP (6-digits)</label>
               <input
