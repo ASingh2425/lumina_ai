@@ -4,6 +4,8 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -14,7 +16,6 @@ from routers.auth import router as auth_router
 from routers.admin import router as admin_router
 from routers.payment import router as payment_router
 
-load_dotenv()
 
 app = FastAPI(title="Lumina AI API", version="0.1.0")
 
