@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Lesson } from '../types/lesson'
 import { WORLDS } from '../types/world'
+import { API_URL } from '../config'
 
 interface HomePageProps {
   lessons: Lesson[]
@@ -40,13 +41,9 @@ export function HomePage({
   const [lockedLesson, setLockedLesson] = useState<string | null>(null)
   const [lockedWorld, setLockedWorld] = useState<string | null>(null)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
-  const [cardNumber, setCardNumber] = useState('')
-  const [cardName, setCardName] = useState('')
-  const [cardExpiry, setCardExpiry] = useState('')
-  const [cardCvc, setCardCvc] = useState('')
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi'>('card')
+
 
   const isAdmin = (() => {
     try {
@@ -58,6 +55,148 @@ export function HomePage({
       return false
     }
   })()
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if ((window as any).Razorpay) {
+        resolve(true)
+        return
+      }
+      const script = document.createElement('script')
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+      script.onload = () => resolve(true)
+      script.onerror = () => resolve(false)
+      document.body.appendChild(script)
+    })
+  }
+
+  const handleRazorpayCheckout = async () => {
+    setIsProcessing(true)
+    try {
+      const scriptLoaded = await loadRazorpayScript()
+      if (!scriptLoaded) {
+        alert("Failed to load Razorpay SDK. Please check your internet connection.")
+        setIsProcessing(false)
+        return
+      }
+
+      let userName = "Student"
+      let userEmail = "student@lumina.ai"
+      try {
+        const rawUser = localStorage.getItem('user')
+        if (rawUser) {
+          const parsed = JSON.parse(rawUser)
+          userName = parsed.name || userName
+          userEmail = parsed.email || userEmail
+        }
+      } catch (e) {
+        console.error(e)
+      }
+
+      const token = localStorage.getItem('token')
+      if (!token) {
+        alert("You must be logged in to make a payment.")
+        setIsProcessing(false)
+        return
+      }
+
+      // Step 1: Create Order on backend
+      const orderRes = await fetch(`${API_URL}/api/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          amount: 9900, // ₹99.00 in paise
+          currency: "INR"
+        })
+      })
+
+      if (!orderRes.ok) {
+        const errData = await orderRes.json()
+        throw new Error(errData.detail || "Failed to create payment order on the server.")
+      }
+
+      const orderData = await orderRes.json()
+      const orderId = orderData.order_id
+
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_T7pwy5ptsRgl1o"
+
+      const options = {
+        key: razorpayKey,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Lumina AI",
+        description: "Lumina Premium Access",
+        order_id: orderId,
+        image: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Lumina",
+        handler: async function (response: any) {
+          setIsProcessing(true)
+          try {
+            // Step 3: Verify signature on backend
+            const res = await fetch(`${API_URL}/api/verify-payment`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            })
+
+            if (!res.ok) {
+              const errData = await res.json()
+              throw new Error(errData.detail || "Payment verification failed.")
+            }
+
+            // Sync user local storage claims
+            const rawUser = localStorage.getItem('user')
+            if (rawUser) {
+              const parsed = JSON.parse(rawUser)
+              parsed.is_admin = true
+              localStorage.setItem('user', JSON.stringify(parsed))
+            }
+            
+            setPaymentSuccess(true)
+          } catch (err: any) {
+            alert(err.message || "An error occurred during verification.")
+          } finally {
+            setIsProcessing(false)
+          }
+        },
+        modal: {
+          ondismiss: function() {
+            setIsProcessing(false)
+          }
+        },
+        prefill: {
+          name: userName,
+          email: userEmail,
+        },
+        notes: {
+          course: "Lumina AI Full Suite",
+        },
+        theme: {
+          color: "#F59E0B",
+        },
+      }
+
+      const rzp = new (window as any).Razorpay(options)
+      rzp.on('payment.failed', function (resp: any) {
+        alert("Payment failed: " + (resp.error.description || "Unknown failure reason"))
+        setIsProcessing(false)
+      })
+      rzp.open()
+    } catch (err: any) {
+      alert("Error preparing checkout: " + err.message)
+      setIsProcessing(false)
+    }
+  }
+
 
   const handleAnswerChallenge = (optId: string) => {
     if (challengeAnswered) return
@@ -466,7 +605,7 @@ export function HomePage({
         </div>
       )}
 
-      {/* --- STRIPE-STYLE CREDIT CARD PAYMENT MODAL --- */}
+      {/* --- RAZORPAY PAYMENT MODAL --- */}
       {showPaymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto">
           <div className="w-full max-w-md rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-6 md:p-8 shadow-2xl relative space-y-6">
@@ -477,14 +616,15 @@ export function HomePage({
                   setPaymentSuccess(false)
                 }
               }} 
-              className="absolute top-4 right-4 text-[#8b93a7] hover:text-white text-lg font-bold cursor-pointer"
+              className="absolute top-4 right-4 text-[#8b93a7] hover:text-white text-lg font-bold cursor-pointer transition-colors"
             >
               ✕
             </button>
 
-            <div className="text-center">
-              <h3 className="text-xl font-extrabold text-white">Unlock Premium Membership</h3>
-              <p className="text-xs text-[#8b93a7] mt-1">Get immediate access to all worlds, labs, and code sandboxes.</p>
+            <div className="text-center space-y-1">
+              <span className="text-4xl block">⚡</span>
+              <h3 className="text-xl font-extrabold text-white">Upgrade to Premium</h3>
+              <p className="text-xs text-[#8b93a7]">Get complete, unlocked access to all AI worlds and sandboxes.</p>
             </div>
 
             {paymentSuccess ? (
@@ -492,207 +632,62 @@ export function HomePage({
                 <span className="text-6xl block animate-bounce">🎉</span>
                 <h4 className="text-lg font-bold text-emerald-400">Payment Successful!</h4>
                 <p className="text-xs text-[#8b93a7] max-w-xs mx-auto leading-relaxed">
-                  Welcome to Lumina Premium! Your account has been promoted. All advanced worlds and labs are now fully unlocked.
+                  Welcome to Lumina Premium! Your account has been upgraded. All advanced worlds and labs are now fully unlocked.
                 </p>
                 <button
                   onClick={() => {
                     setShowPaymentModal(false)
                     setPaymentSuccess(false)
-                    window.location.reload() // Reload to instantly sync all dashboard locks!
+                    window.location.reload()
                   }}
-                  className="rounded-xl bg-emerald-500 hover:bg-emerald-400 px-6 py-2.5 text-xs font-bold text-black transition-all cursor-pointer"
+                  className="w-full rounded-xl bg-emerald-500 hover:bg-emerald-400 px-6 py-3 text-xs font-bold text-black transition-all cursor-pointer font-sans"
                 >
                   Start Exploring
                 </button>
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Payment Method Tabs */}
-                <div className="flex border border-[var(--color-border)] rounded-xl overflow-hidden p-1 bg-[#0a0c10]">
-                  <button
-                    onClick={() => setPaymentMethod('card')}
-                    disabled={isProcessing}
-                    className={`flex-1 text-center py-2 text-xs font-bold rounded-lg cursor-pointer transition-all ${
-                      paymentMethod === 'card' ? 'bg-amber-500 text-black' : 'text-[#8b93a7] hover:text-white'
-                    }`}
-                  >
-                    💳 Credit Card
-                  </button>
-                  <button
-                    onClick={() => setPaymentMethod('upi')}
-                    disabled={isProcessing}
-                    className={`flex-1 text-center py-2 text-xs font-bold rounded-lg cursor-pointer transition-all ${
-                      paymentMethod === 'upi' ? 'bg-amber-500 text-black' : 'text-[#8b93a7] hover:text-white'
-                    }`}
-                  >
-                    📱 UPI / QR Code
-                  </button>
+                {/* Features list */}
+                <div className="space-y-3 bg-[#0a0c10]/45 p-4 rounded-2xl border border-[var(--color-border)]/50">
+                  <div className="flex items-start gap-2.5 text-xs text-white">
+                    <span className="text-amber-500 text-sm mt-0.5">✓</span>
+                    <span>Unlock all <strong>10 AI Worlds</strong> and advanced math labs.</span>
+                  </div>
+                  <div className="flex items-start gap-2.5 text-xs text-white">
+                    <span className="text-amber-500 text-sm mt-0.5">✓</span>
+                    <span>Full client-side <strong>WASM Python Console</strong> editor.</span>
+                  </div>
+                  <div className="flex items-start gap-2.5 text-xs text-white">
+                    <span className="text-amber-500 text-sm mt-0.5">✓</span>
+                    <span>Interactive loss curve diagnostics & debugging modules.</span>
+                  </div>
+                  <div className="flex items-start gap-2.5 text-xs text-white">
+                    <span className="text-amber-500 text-sm mt-0.5">✓</span>
+                    <span>Instant activation & secure payment processing.</span>
+                  </div>
                 </div>
 
-                {paymentMethod === 'card' ? (
-                  <div className="space-y-6">
-                    {/* Visual Credit Card Mockup */}
-                    <div className="w-full aspect-[1.586/1] rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-500 p-6 flex flex-col justify-between shadow-xl relative text-white font-mono overflow-hidden">
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-8 -mt-8" />
-                      
-                      {/* Top card row */}
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-white/60 tracking-widest uppercase">Premium Member</span>
-                          <div className="w-8 h-6 bg-amber-400/80 rounded-md border border-amber-500/20" />
-                        </div>
-                        <span className="text-lg font-bold italic tracking-tight">Lumina</span>
-                      </div>
-
-                      {/* Card number row */}
-                      <div className="text-base md:text-lg tracking-[0.2em] font-medium my-4 min-h-[24px]">
-                        {cardNumber || '•••• •••• •••• ••••'}
-                      </div>
-
-                      {/* Bottom card row */}
-                      <div className="flex justify-between items-end">
-                        <div>
-                          <span className="text-[7px] text-white/5 tracking-wider block">CARDHOLDER</span>
-                          <span className="text-[10px] font-bold tracking-wide uppercase min-h-[15px] block">
-                            {cardName || 'YOUR NAME'}
-                          </span>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-[7px] text-white/5 tracking-wider block">EXPIRES</span>
-                          <span className="text-[10px] font-bold tracking-wide min-h-[15px] block">
-                            {cardExpiry || 'MM/YY'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Card input forms */}
-                    <div className="space-y-4 text-left">
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-[#8b93a7] uppercase tracking-wider">Cardholder Name</label>
-                        <input
-                          type="text"
-                          placeholder="Jane Doe"
-                          value={cardName}
-                          onChange={(e) => setCardName(e.target.value)}
-                          disabled={isProcessing}
-                          className="w-full rounded-xl border border-[var(--color-border)] bg-[#0d0f14] p-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
-                        />
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-[#8b93a7] uppercase tracking-wider">Card Number</label>
-                        <input
-                          type="text"
-                          placeholder="4111 1111 1111 1111"
-                          value={cardNumber}
-                          maxLength={19}
-                          onChange={(e) => {
-                            const val = e.target.value.replace(/\s?/g, '').replace(/(\d{4})/g, '$1 ').trim()
-                            setCardNumber(val)
-                          }}
-                          disabled={isProcessing}
-                          className="w-full rounded-xl border border-[var(--color-border)] bg-[#0d0f14] p-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold text-[#8b93a7] uppercase tracking-wider">Expires</label>
-                          <input
-                            type="text"
-                            placeholder="MM/YY"
-                            value={cardExpiry}
-                            maxLength={5}
-                            onChange={(e) => {
-                              let val = e.target.value
-                              if (val.length === 2 && !val.includes('/')) {
-                                val += '/'
-                              }
-                              setCardExpiry(val)
-                            }}
-                            disabled={isProcessing}
-                            className="w-full rounded-xl border border-[var(--color-border)] bg-[#0d0f14] p-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
-                          />
-                        </div>
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold text-[#8b93a7] uppercase tracking-wider">CVC Code</label>
-                          <input
-                            type="password"
-                            placeholder="***"
-                            value={cardCvc}
-                            maxLength={3}
-                            onChange={(e) => setCardCvc(e.target.value)}
-                            disabled={isProcessing}
-                            className="w-full rounded-xl border border-[var(--color-border)] bg-[#0d0f14] p-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-6 text-center animate-fade-in">
-                    {/* UPI QR Display */}
-                    <div className="bg-white p-4 rounded-2xl inline-block shadow-lg mx-auto">
-                      <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=0-0-0&data=${encodeURIComponent(
-                          "upi://pay?pa=9236518010@axisbank&pn=Anvesha%20Singh&am=99.00&cu=INR&tn=Lumina%20Premium"
-                        )}`}
-                        alt="UPI Payment QR Code"
-                        className="w-48 h-48 mx-auto"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <span className="text-xs font-bold text-white block">Scan to Pay via any UPI App</span>
-                      <div className="text-[11px] text-[#8b93a7] leading-relaxed">
-                        UPI ID: <span className="text-white font-mono font-bold select-all bg-[#0d0f14] px-2 py-1 rounded">9236518010@axisbank</span>
-                      </div>
-                      <p className="text-[10px] text-amber-500 max-w-xs mx-auto leading-relaxed">
-                        Scan the code using Google Pay, PhonePe, Paytm, or BHIM. After confirming the payment, click the verification button below.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Call-to-action details */}
-                <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-4">
+                <div className="bg-[#0a0c10] border border-[var(--color-border)] p-4 rounded-2xl flex justify-between items-center">
                   <div>
-                    <span className="text-[10px] text-[#8b93a7] block font-semibold uppercase">Total Charge</span>
-                    <span className="text-lg font-black text-white">
-                      {paymentMethod === 'card' ? '$9.99' : '₹99'}{' '}
-                      <span className="text-[10px] text-[#8b93a7] font-normal">/mo</span>
-                    </span>
+                    <span className="text-[10px] text-[#8b93a7] block font-bold uppercase tracking-wider">Premium Access</span>
+                    <span className="text-2xl font-black text-white font-mono">₹99 <span className="text-xs text-[#8b93a7] font-normal">/ month</span></span>
                   </div>
-                  <button
-                    onClick={async () => {
-                      if (paymentMethod === 'card' && (!cardNumber || !cardName || !cardExpiry || !cardCvc)) {
-                        alert("Please fill out all card details to unlock Premium.")
-                        return
-                      }
-                      setIsProcessing(true)
-                      
-                      setTimeout(() => {
-                        try {
-                          const rawUser = localStorage.getItem('user')
-                          if (rawUser) {
-                            const parsed = JSON.parse(rawUser)
-                            parsed.is_admin = true
-                            localStorage.setItem('user', JSON.stringify(parsed))
-                          }
-                          setPaymentSuccess(true)
-                        } catch (err) {
-                          alert("Failed to update user profile claims.")
-                        } finally {
-                          setIsProcessing(false)
-                        }
-                      }, 1800)
-                    }}
-                    disabled={isProcessing}
-                    className="rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 px-6 py-3 text-xs font-extrabold text-black transition-all cursor-pointer"
-                  >
-                    {isProcessing ? 'Verifying...' : paymentMethod === 'card' ? 'Pay $9.99 🚀' : 'Confirm UPI Transfer 🚀'}
-                  </button>
+                  <span className="text-[10px] bg-amber-500/10 text-amber-400 px-2.5 py-1 rounded-full font-bold border border-amber-400/20">
+                    Best Value
+                  </span>
                 </div>
+
+                <button
+                  onClick={handleRazorpayCheckout}
+                  disabled={isProcessing}
+                  className="w-full rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 px-6 py-4 text-xs font-black text-black tracking-wider uppercase transition-all cursor-pointer shadow-lg hover:shadow-amber-500/10"
+                >
+                  {isProcessing ? 'Opening Payment Gateway...' : 'Pay ₹99 with Razorpay 💳'}
+                </button>
+
+                <p className="text-[10px] text-[#8b93a7] text-center max-w-xs mx-auto leading-relaxed">
+                  Secured by Razorpay. Card, Netbanking, UPI, and Wallet payments are fully supported.
+                </p>
               </div>
             )}
           </div>

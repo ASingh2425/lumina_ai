@@ -42,6 +42,16 @@ class Progress(Base):
 
     user = relationship("User", back_populates="progress")
 
+class PaymentRequest(Base):
+    __tablename__ = "payment_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    username = Column(String, nullable=False)
+    utr_number = Column(String, unique=True, index=True, nullable=False)
+    amount = Column(Integer, default=99)
+    status = Column(String, default="pending") # pending, approved, rejected
+
 # Create tables
 Base.metadata.create_all(bind=engine)
 

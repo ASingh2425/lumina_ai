@@ -12,6 +12,7 @@ from routers.tutor import router as tutor_router
 from routers.github import router as github_router
 from routers.auth import router as auth_router
 from routers.admin import router as admin_router
+from routers.payment import router as payment_router
 
 load_dotenv()
 
@@ -30,6 +31,7 @@ app.include_router(progress_router, prefix="/api")
 app.include_router(github_router)
 app.include_router(auth_router)
 app.include_router(admin_router)
+app.include_router(payment_router)
 
 
 @app.get("/health")
