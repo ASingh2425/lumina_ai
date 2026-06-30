@@ -2308,6 +2308,75 @@ print("Successfully resolved context injection!")`,
       },
     ],
   },
+  {
+    id: 'loss-diagnostics',
+    title: 'Debugging Models: Reading Loss Curves',
+    description: 'Diagnose overfitting, underfitting, and data leakage parameters by monitoring training vs validation loss curves.',
+    module: 'Model Production',
+    xpReward: 250,
+    worldId: 'world-10',
+    isPremium: true,
+    steps: [
+      {
+        id: 'loss-story',
+        type: 'story',
+        title: 'Evaluating Training Progress',
+        content:
+          'When training neural networks, we plot **Loss Curves** over training epochs.\n\nBy comparing **Training Loss** (how well the model memorizes training samples) against **Validation Loss** (how well it generalizes to unseen test subsets), we can instantly diagnose if a model is overfitting, underfitting, or experiencing data leakage.',
+      },
+      {
+        id: 'loss-visual',
+        type: 'visual',
+        title: 'Mock Interview Prep: Diagnosing Curve Failures',
+        content:
+          'Review the performance metrics. Answer system design questions regarding how to correct underfitting and reduce validation gaps.',
+        widget: 'interview-recruiter',
+      },
+      {
+        id: 'loss-math',
+        type: 'math',
+        title: 'The Generalization Gap',
+        formula: 'Generalization Gap = |E_val - E_train|',
+        content: 'The distance between training error ($E_{train}$) and validation error ($E_{val}$) measures the generalization gap. If this gap diverges over epochs, the model is overfitting.',
+        mathParts: [
+          { symbol: 'E_train', explanation: 'Loss score evaluated across training samples.' },
+          { symbol: 'E_val', explanation: 'Loss score evaluated across separate validation splits.' },
+          { symbol: 'Generalization Gap', explanation: 'Large gaps suggest the model is memorizing noise. Solution: increase regularization or add dropout.' },
+        ],
+      },
+      {
+        id: 'loss-code',
+        type: 'code',
+        title: 'Implementing an Overfitting Detector Loop',
+        code: `# Monitor training logs and raise early stopping triggers if overfitting is detected
+import numpy as np
+
+# Epoch-by-epoch loss records
+train_loss = [0.8, 0.5, 0.3, 0.2, 0.1, 0.08]
+val_loss   = [0.9, 0.6, 0.4, 0.42, 0.48, 0.55] # Validation loss starts to rise!
+
+patience = 2
+patience_counter = 0
+best_val_loss = float('inf')
+
+for epoch in range(len(train_loss)):
+    curr_val = val_loss[epoch]
+    curr_train = train_loss[epoch]
+    gap = curr_val - curr_train
+    
+    print(f"Epoch {epoch}: Train Loss = {curr_train} | Val Loss = {curr_val} | Gap = {gap:.2f}")
+    
+    if curr_val < best_val_loss:
+        best_val_loss = curr_val
+        patience_counter = 0 # Reset counter
+    else:
+        patience_counter += 1
+        if patience_counter >= patience:
+            print(f"--> EARLY STOPPING TRIGGERED on epoch {epoch}! Model is overfitting.")
+            break`,
+      },
+    ],
+  },
 ]
 
 export function getLesson(id: string): Lesson | undefined {

@@ -19,6 +19,7 @@ import { RandomForestPlayground } from './playgrounds/RandomForestPlayground'
 import { InterviewPlayground } from './playgrounds/InterviewPlayground'
 import { ProjectPushPlayground } from './playgrounds/ProjectPushPlayground'
 import { NetflixSimulator } from './playgrounds/NetflixSimulator'
+import { PythonCodeConsole } from './playgrounds/PythonCodeConsole'
 
 function Widget({ type, step, sandbox }: { type: WidgetType; step: LessonStep; sandbox?: boolean }) {
   const topic = step.id.startsWith('gd-')
@@ -113,9 +114,7 @@ export function StepContent({ step, onQuizCorrect }: StepContentProps) {
         {step.interactiveCode ? (
           <InteractiveCodeLab lab={step.interactiveCode} onCorrect={onQuizCorrect} />
         ) : (
-          <pre className="overflow-x-auto rounded-2xl border border-[var(--color-border)] bg-[#0a0c10] p-5 font-mono text-sm leading-relaxed text-[#a8d4a8]">
-            {step.code}
-          </pre>
+          <PythonCodeConsole initialCode={step.code} />
         )}
       </div>
     )
