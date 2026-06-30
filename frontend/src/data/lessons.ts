@@ -1072,6 +1072,233 @@ print(vocab) # {'l ea r n i n g': 5, 'n e u r a l': 3}`,
       },
     ],
   },
+  {
+    id: 'computer-vision',
+    title: 'Computer Vision & Object Detection',
+    description: 'Learn how convolutional filters isolate edge lines, trace bounding boxes using YOLO models, and extract metadata.',
+    module: 'Object Detection',
+    xpReward: 200,
+    worldId: 'world-8',
+    isPremium: true,
+    steps: [
+      {
+        id: 'cv-story',
+        type: 'story',
+        title: 'Eyes for AI',
+        content:
+          'How does a computer see? To an algorithm, a digital photo is not colors and shapes — it is a huge matrix of grid numbers representing pixel intensities.\n\nTo find a face or a road sign, a Convolutional Network slides small matrices (called kernels or filters) across the image to extract high-level shapes like lines, edges, and orientations.',
+      },
+      {
+        id: 'cv-math',
+        type: 'math',
+        title: 'Bounding Box Score (IoU)',
+        formula: 'IoU = Area of Intersection / Area of Union',
+        content: 'To evaluate object detectors (like YOLO), we check the **Intersection over Union (IoU)** metric. This measures how close our predicted bounding box aligns with the actual ground-truth label bounding box.',
+        mathParts: [
+          { symbol: 'Intersection', explanation: 'The overlapping region area shared between target box and prediction box.' },
+          { symbol: 'Union', explanation: 'The combined total region area spanned by both target box and prediction box.' },
+          { symbol: 'IoU', explanation: 'Alignment ratio. IoU > 0.5 represents a correct localization prediction.' },
+        ],
+      },
+      {
+        id: 'cv-code',
+        type: 'code',
+        title: 'Running Bounding Boxes in OpenCV',
+        code: `import cv2
+import numpy as np
+
+# Load raw image matrix
+image = cv2.imread("traffic.jpg")
+height, width, _ = image.shape
+
+# Define mock detector parameters (x, y, w, h)
+box = [50, 100, 120, 80]
+x, y, w, h = box
+
+# Draw a bounding rectangle box on image
+cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+cv2.putText(image, "Car: 94%", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+# Save processed matrix
+cv2.imwrite("detected.jpg", image)
+print("Saved bounding box overlays.")`,
+      },
+    ],
+  },
+  {
+    id: 'reinforcement-learning',
+    title: 'Reinforcement Learning & Q-Agents',
+    description: 'Build an autonomous agent that learns to navigate grids and mazes by exploring and maximizing numeric environment rewards.',
+    module: 'Agent Decisions',
+    xpReward: 350,
+    worldId: 'world-9',
+    isPremium: true,
+    steps: [
+      {
+        id: 'rl-story',
+        type: 'story',
+        title: 'Learning from Mistakes',
+        content:
+          'Unlike supervised ML where we provide direct answers, in **Reinforcement Learning** the agent learns by trial and error. It interacts with an environment, transitions between states, performs actions, and receives numerical feedback rewards (positive or negative).\n\nThink of training a dog: perform a trick → get a treat (+10 reward); break a vase → get scouled (-5 reward). Over time, the agent optimizes its policy to maximize total cumulative rewards.',
+      },
+      {
+        id: 'rl-math',
+        type: 'math',
+        title: 'The Bellman Equation',
+        formula: 'Q(s, a) = Q(s, a) + α * [ R + γ * max Q(s\', a\') - Q(s, a) ]',
+        content: 'To store the expected value of taking action **a** in state **s**, the agent updates a **Q-Table** using the Bellman Equation formula:',
+        mathParts: [
+          { symbol: 'Q(s, a)', explanation: 'Current expected cumulative reward value of taking action a in state s.' },
+          { symbol: 'α (alpha)', explanation: 'Learning rate (0 to 1). Controls how fast new reward experiences overwrite old values.' },
+          { symbol: 'R', explanation: 'Instant numerical reward feedback received from taking action a.' },
+          { symbol: 'γ (gamma)', explanation: 'Discount factor (0 to 1). Controls how much the agent values future rewards vs. instant rewards.' },
+          { symbol: 'max Q(s\', a\')', explanation: 'The highest possible Q-value in the next state s\', representing optimal future path choices.' },
+        ],
+      },
+      {
+        id: 'rl-code',
+        type: 'code',
+        title: 'Building a Q-Learning Agent Loop',
+        code: `import numpy as np
+import random
+
+# Initialize a simple grid environment: 5 states, 2 actions (0: Left, 1: Right)
+num_states = 5
+num_actions = 2
+Q_table = np.zeros((num_states, num_actions))
+
+# Set parameters
+alpha = 0.1     # Learning rate
+gamma = 0.9     # Discount factor
+epsilon = 0.3   # Exploration rate
+
+# Simple rewards list (reaching state 4 gets +10 reward)
+rewards = [-1, -1, -1, -1, 10]
+
+# Single training step loop
+def train_step(state):
+    # Epsilon-greedy action selection
+    if random.uniform(0, 1) < epsilon:
+        action = random.choice([0, 1]) # Explore: choose random action
+    else:
+        action = np.argmax(Q_table[state]) # Exploit: choose best Q-value
+        
+    # Transition dynamics
+    if action == 1: # Move Right
+        next_state = min(state + 1, num_states - 1)
+    else: # Move Left
+        next_state = max(state - 1, 0)
+        
+    reward = rewards[next_state]
+    
+    # Q-Value Update using Bellman Equation
+    best_next_q = np.max(Q_table[next_state])
+    Q_table[state, action] = Q_table[state, action] + alpha * (reward + gamma * best_next_q - Q_table[state, action])
+    
+    return next_state, reward
+
+# Run training across 1000 epochs
+state = 0
+for epoch in range(1000):
+    state, r = train_step(state)
+    if state == 4: # Goal reached, reset agent
+        state = 0
+
+print("Final Optimized Q-Table values:")
+print(Q_table)
+print("Agent now knows exactly how to step to maximize rewards!")`,
+      },
+    ],
+  },
+  {
+    id: 'mlops',
+    title: 'MLOps Deployment & FastAPI',
+    description: 'Wrap models inside FastAPI endpoints, containerize using Docker, and monitor data drift parameters in production.',
+    module: 'Model Production',
+    xpReward: 220,
+    worldId: 'world-10',
+    isPremium: true,
+    steps: [
+      {
+        id: 'ops-story',
+        type: 'story',
+        title: 'Shipping to Production',
+        content:
+          'A model on a laptop is useless. To make it valuable, you must expose it as a web service. This is the domain of **MLOps** (Machine Learning Operations).\n\nBy packaging our model inside a **FastAPI** web endpoint, clients can send inputs via JSON requests and receive predictions instantly.',
+      },
+      {
+        id: 'ops-code',
+        type: 'code',
+        title: 'Building a FastAPI Inference Endpoint',
+        code: `from fastapi import FastAPI
+from pydantic import BaseModel
+import numpy as np
+
+app = FastAPI(title="Lumina Predictor Service")
+
+class InputData(BaseModel):
+    features: list
+
+# Simulated loading of weights
+weights = np.array([0.5, -0.2, 1.1])
+
+@app.post("/predict")
+def get_prediction(data: InputData):
+    x = np.array(data.features)
+    # Dot product inference
+    raw_score = np.dot(x, weights)
+    prediction = 1 if raw_score > 0 else 0
+    return {"prediction": prediction, "score": float(raw_score)}
+
+# Run using: uvicorn main:app --reload`,
+      },
+    ],
+  },
+  {
+    id: 'ai-portfolio',
+    title: 'Building a RAG Assistant & Spam Detector',
+    description: 'Wrap up your resume-worthy portfolio projects and deploy to live git repositories.',
+    module: 'Portfolio Builds',
+    xpReward: 400,
+    worldId: 'world-12',
+    isPremium: true,
+    steps: [
+      {
+        id: 'port-story',
+        type: 'story',
+        title: 'Assemble Your Portfolio',
+        content:
+          'Congratulations! You have navigated the entire AI curriculum. Now it is time to build something tangible.\n\nIn this capstone project, you will combine your Python knowledge, text embeddings, and FastAPI servers to compile an end-to-end spam classifier and a PDF-based RAG assistant. Commit your code, push, and present it to employers.',
+      },
+      {
+        id: 'port-code',
+        type: 'code',
+        title: 'Capstone Spam Classifier script',
+        code: `# Build your resume-worthy Spam Classifier
+import numpy as np
+
+# Vocabulary index
+vocab = {"free": 0, "win": 1, "project": 2, "meeting": 3}
+spam_weights = np.array([2.5, 3.0, -1.5, -2.0]) # High weights indicate spam indicators
+bias = -0.5
+
+def classify_text(text):
+    tokens = text.lower().split()
+    features = np.zeros(len(vocab))
+    for t in tokens:
+        if t in vocab:
+            features[vocab[t]] += 1
+            
+    # Calculate score
+    score = np.dot(features, spam_weights) + bias
+    is_spam = 1 / (1 + np.exp(-score)) # Sigmoid activation
+    return "Spam" if is_spam > 0.5 else "Ham"
+
+print(classify_text("Win a free prize today")) # Prints Spam
+print(classify_text("Meeting tomorrow to discuss project details")) # Prints Ham`,
+      },
+    ],
+  },
 ]
 
 export function getLesson(id: string): Lesson | undefined {
