@@ -1753,7 +1753,15 @@ print("Reasoned Answer Output:", final_output)`,
         type: 'story',
         title: 'Ethics in the AI Age',
         content:
-          'As AI systems grow in power, so do our responsibilities.\n\nFrom bias in datasets to privacy concerns, hallucinating text, and copyright disputes — building responsible AI is not optional. AI Engineers must understand how data limits translate to real-world failures.',
+          'As AI systems grow in power, so do our responsibilities.\n\nFrom bias in datasets to privacy concerns, hallucinating text, and copyright disputes — responsible AI is not optional. AI Engineers must understand how data limits translate to real-world failures.',
+      },
+      {
+        id: 'eth-visual',
+        type: 'visual',
+        title: 'Mock Interview Prep: Ethics',
+        content:
+          'Practice answering common recruiter system design questions about fairness, data privacy, and mitigation metrics.',
+        widget: 'interview-recruiter',
       },
       {
         id: 'eth-math',
@@ -1804,6 +1812,14 @@ print(f"Demographic Parity Ratio (target >= 0.8): {parity_ratio:.2f}")`,
           'Python is chosen for AI due to its readability and powerful math packages.\n\nBegin by learning to declare variables, run conditions (`if/else`), loop through sequences (`for/while`), and modularize your code using functions.',
       },
       {
+        id: 'pyb-visual',
+        type: 'visual',
+        title: 'Code Builder: Logical Thresholds',
+        content:
+          'Fill in the blanks to build a python logic block that prints predictions when values cross threshold levels.',
+        widget: 'project-push',
+      },
+      {
         id: 'pyb-math',
         type: 'math',
         title: 'Logical Activation Thresholds',
@@ -1845,6 +1861,14 @@ print("Updated weights list:", weights)`,
         title: 'The Train/Test Split Rule',
         content:
           'Never test your model on the same data it trained on! That is like giving a student the exam questions before the test.\n\nAlways split your dataset into **Train** (to optimize weights) and **Test** (to validate real-world generalization).',
+      },
+      {
+        id: 'datf-visual',
+        type: 'visual',
+        title: 'Dataset Dimension Visualizer',
+        content:
+          'Adjust slicing indices using the sliders below to see how rows and columns map to train and validation sets.',
+        widget: 'numpy-slice',
       },
       {
         id: 'datf-math',
@@ -1901,6 +1925,14 @@ print("Dataset splits completed successfully!")`,
           'In deep learning, neural layers perform matrix multiplications.\n\nThe core operation is the **Dot Product**: multiplying feature inputs by weight vectors and summing them. Master this operation to understand network feedforward sweeps.',
       },
       {
+        id: 'la-visual',
+        type: 'visual',
+        title: 'Interactive Vector Projections',
+        content:
+          'Hover over the graph and move eigenvectors to see how high-dimensional vectors project down to principal component axes.',
+        widget: 'pca',
+      },
+      {
         id: 'la-math',
         type: 'math',
         title: 'Matrix Multiplication',
@@ -1950,6 +1982,14 @@ print("Matrix dimensions resolved:", C.shape)`,
         title: 'Kernel Slices',
         content:
           'Standard neural networks flatten images, losing spatial coordinate groupings. Convolutional neural networks (CNNs) preserve 2D grid dimensions by sliding filters over pixel segments to extract local features.',
+      },
+      {
+        id: 'cnn-visual',
+        type: 'visual',
+        title: 'Convolution Filter Scan',
+        content:
+          'Draw a digit on the canvas below and adjust parameters to see how kernels filter edges and pooling compresses resolutions.',
+        widget: 'cnn',
       },
       {
         id: 'cnn-math',
@@ -2016,6 +2056,14 @@ print(O)`,
           'Traditional detectors scan images repeatedly. YOLO (You Only Look Once) feeds the entire image through a single CNN forward pass to predict bounding boxes and class probabilities simultaneously.',
       },
       {
+        id: 'yolo-visual',
+        type: 'visual',
+        title: 'Code Builder: YOLO Overlaps',
+        content:
+          'Complete the missing mathematical calculations inside the custom bounding box pipeline logic.',
+        widget: 'project-push',
+      },
+      {
         id: 'yolo-math',
         type: 'math',
         title: 'Non-Maximum Suppression (NMS)',
@@ -2073,6 +2121,14 @@ print("Intersection over Union overlap score:", compute_iou(b1, b2))`,
           'Local environments break. Docker locks OS packages, Python binaries, and dependency weights in a container so your FastAPI model runs identically on Vercel, AWS, or any remote machine.',
       },
       {
+        id: 'dock-visual',
+        type: 'visual',
+        title: 'Mock Interview Prep: MLOps Service Design',
+        content:
+          'Test your skills in deploying model microservices, container settings, and scaling APIs.',
+        widget: 'interview-recruiter',
+      },
+      {
         id: 'dock-math',
         type: 'math',
         title: 'Service SLA Compliance Rate',
@@ -2127,6 +2183,14 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]`,
         title: 'Beyond Simple Prompts',
         content:
           'An agent is an LLM running in a loop with tools. Given a task, the agent plans steps, calls tools (like web search or calculators), monitors results, and loops until the goal is achieved.',
+      },
+      {
+        id: 'ag-visual',
+        type: 'visual',
+        title: 'Code Builder: Agent Tool Routing',
+        content:
+          'Fill in the blanks to route agent query chains to calculator and API web tools.',
+        widget: 'project-push',
       },
       {
         id: 'ag-math',
@@ -2189,6 +2253,14 @@ run_agent_loop("calculate 500 * 24 - 100")`,
         title: 'Build and Deploy a RAG Assistant',
         content:
           'Upload PDF manuals, chunk them, store their embeddings in a local vector array, and construct prompt contexts for your LLM. Showcase it live as a full-stack portfolio piece!',
+      },
+      {
+        id: 'rc-visual',
+        type: 'visual',
+        title: 'Code Builder: Commit & Push',
+        content:
+          'Validate your final RAG chatbot logic and execute a git push to save it in your portfolio.',
+        widget: 'project-push',
       },
       {
         id: 'rc-math',
